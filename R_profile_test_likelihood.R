@@ -2,7 +2,7 @@
 local({
 external_library=path.expand(file.path("~","R",paste0(R.Version()$platform,"-library"),paste0(R.Version()$major,".",strsplit(R.Version()$minor,".",fixed=T)[[1]][1])))
 if(!require(profvis,lib.loc = external_library)) {
-  install.packages("profvis",lib.loc = external_library)
+  install.packages("profvis",lib = external_library)
   if(!require(profvis,lib.loc = external_library)) {
     stop("Failed to install profiler")
   }
