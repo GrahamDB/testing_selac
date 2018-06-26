@@ -9,6 +9,12 @@ if(!require(profvis,lib.loc = external_library)) {
 }
 invisible(T)
 })
+if(!require(selac)){
+  source("setup.R")
+  if(!require(selac))
+    stop("Failed to install selac")
+} 
+
 profvis({
   ## Test 1
   set.seed(4)
@@ -34,7 +40,7 @@ profvis({
   print(comparison)
   
   
-})
+}, prof_output = "likelihood_test_1.Rprof")
 
 profvis({
   ## Test 2
