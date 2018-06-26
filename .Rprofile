@@ -9,4 +9,5 @@
   if(!dir.exists(local_path))
     dir.create(local_path,recursive = T,mode = "0755")
   .libPaths(local_path)
+  options(Ncpus=12)
 }
