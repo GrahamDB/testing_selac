@@ -1,12 +1,14 @@
 #Profile basic test
-
-if(!require(profvis)) {
-  install.packages("profvis")
-  if(!require(profvis)) {
+local({
+external_library=path.expand(file.path("~","R",paste0(R.Version()$platform,"-library"),paste0(R.Version()$major,".",strsplit(R.Version()$minor,".",fixed=T)[[1]][1])))
+if(!require(profvis,lib.loc = external_library)) {
+  install.packages("profvis",lib.loc = external_library)
+  if(!require(profvis,lib.loc = external_library)) {
     stop("Failed to install profiler")
   }
 }
-
+invisible(T)
+})
 profvis({
   ## Test 1
   set.seed(4)
