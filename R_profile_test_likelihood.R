@@ -9,6 +9,9 @@ local({
       stop("Failed to install profiler")
     }
   }
+  library(htmlwidgets,lib.loc = user_path)
+  library(jsonlite,lib.loc = user_path)
+  library(yaml,lib.loc = user_path)
   invisible(T)
 })
 print(selac_release)
@@ -16,7 +19,8 @@ setup_selac_for_profiling()
 profile_prefix=paste0("likelihood_test_",selac_release)
 print(selac_release)
 
-profvis({
+try({
+prof_obj <- profvis({
   ## Test 1
   set.seed(4)
   tree <- read.tree("rokasYeast.tre")
@@ -42,8 +46,10 @@ profvis({
   
   
 }, prof_output = paste0(profile_prefix,"_GTR_rokasYeast.Rprof"))
-
-profvis({
+htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_GTR_rokasYeast.Rprofvis"))
+})
+try({
+prof_obj <- profvis({
   ## Test 2
   set.seed(4)
   tree <- read.tree("rokasYeast.tre")
@@ -67,8 +73,10 @@ profvis({
   comparison <- identical(round(selac.unrest, 3), -7066.477)
   print(comparison)
 }, prof_output = paste0(profile_prefix,"_UNREST_rokasYeast.Rprof"))
-
-profvis({
+htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNREST_rokasYeast.Rprofvis"))
+})
+try({
+  prof_obj <- profvis({
   
   ## Test 3
   set.seed(4)
@@ -94,7 +102,10 @@ profvis({
   print(comparison)
 }, prof_output =paste0(profile_prefix,"_UNRESTmedian_rokasYeast.Rprof"))
 
-profvis({
+  htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNRESTmedian_rokasYeast.Rprofvis"))
+})
+try({
+  prof_obj <- profvis({
   ## Test 4
   set.seed(4)
   tree <- read.tree("rokasYeast.tre")
@@ -118,3 +129,5 @@ profvis({
   comparison <- identical(round(selac_gamma, 3), -6998.618)
   print(comparison)
 }, prof_output = paste0(profile_prefix,"_UNRESTquadrature_rokasYeast.Rprof"))
+  htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNRESTquadrature_rokasYeast.Rprofvis"))
+})
