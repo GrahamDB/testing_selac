@@ -1,5 +1,7 @@
 # working directory init
 
+options(Ncpus=12)
+
 .First <-function(){
   local_path<-file.path(getwd(),
                         R.Version()$platform,
