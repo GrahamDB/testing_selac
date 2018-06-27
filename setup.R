@@ -9,13 +9,20 @@
 # 
 # install.packages(dep_imports,type="source", INSTALL_opts="--with-keep.source")
 if(length(ls(pattern="^selac_release$"))==0)
-   selac_release=NULL
+  selac_release=NULL
+if(length(ls(pattern="^user_path$"))==0)
+  user_path=.libPaths()
+print(user_path)
+library(parallel,lib.loc = user_path)
+library(devtools,lib.loc = user_path)
 setup_selac_for_profiling <- function(ref="v1.6.1-rc1"){
   if(!is.null(selac_release)){
     ref=selac_release
   } else {
     selac_release <<- ref
   }
+  print(selac_release)
+  library(parallel)
   local_path<-file.path(getwd(),
                         R.Version()$platform,
                         paste0(R.Version()$major,
@@ -28,12 +35,21 @@ setup_selac_for_profiling <- function(ref="v1.6.1-rc1"){
   
   .libPaths(local_path)
   
-  if(!require(selac)){
-    install.packages(c("expm", "MASS", "parallel", "phangorn", "seqinr", "statmod", 
-      "zoo", "RColorBrewer","ape","deSolve","nloptr","deSolve","nnet"),type="source", 
-      INSTALL_opts="--with-keep.source")
+  if(! "selac" %in% installed.packages()[,"Package"]){
+    cat("\nSelac not found, installing.\n\n")
+    library(parallel,lib.loc = user_path)
+    library(devtools,lib.loc = user_path)
+    library(httr,lib.loc = user_path)
+    need_packs=c("expm", "MASS", "phangorn", "seqinr", "statmod", 
+                 "zoo", "RColorBrewer","ape","deSolve","nloptr","deSolve","nnet")
+    if(any(!need_packs %in% installed.packages()[,"Package"] ))
+    install.packages(c("expm", "MASS", "phangorn", "seqinr", "statmod", 
+      "zoo", "RColorBrewer","ape","deSolve","nloptr","deSolve","nnet"
+      )[!need_packs %in% installed.packages()[,"Package"]],
+      type="source", INSTALL_opts="--with-keep.source")
     install_github("GrahamDB/selac",ref=ref)
-    if(!require(selac))
+    if(!"selac" %in% installed.packages()[,"Package"])
       stop("Failed to install selac")
   }
+  library(selac)
 }

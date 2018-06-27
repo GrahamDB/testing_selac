@@ -1,19 +1,20 @@
 #Profile basic test
-local({
-external_library=path.expand(file.path("~","R",paste0(R.Version()$platform,"-library"),paste0(R.Version()$major,".",strsplit(R.Version()$minor,".",fixed=T)[[1]][1])))
-if(!require(profvis,lib.loc = external_library)) {
-  install.packages("profvis",lib = external_library)
-  if(!require(profvis,lib.loc = external_library)) {
-    stop("Failed to install profiler")
-  }
-}
-invisible(T)
-})
+
 
 source("setup.R")
+local({
+  if(!require(profvis,lib.loc = user_path)) {
+    install.packages("profvis",lib = user_path)
+    if(!require(profvis,lib.loc = user_path)) {
+      stop("Failed to install profiler")
+    }
+  }
+  invisible(T)
+})
+print(selac_release)
 setup_selac_for_profiling()
 profile_prefix=paste0("likelihood_test_",selac_release)
-
+print(selac_release)
 
 profvis({
   ## Test 1
