@@ -15,7 +15,7 @@ local({
   invisible(T)
 })
 print(selac_release)
-setup_selac_for_profiling()
+# setup_selac_for_profiling()
 
 
 # basic loader to build further tests
@@ -43,6 +43,18 @@ load_inputs <- function(){
   codon.index.matrix = selac:::CreateCodonMutationMatrixIndex()
   
 }
+load_rokasYeast <- function(){
+  tree <- read.tree("rokasYeast.tre")
+  phy <- drop.tip(tree, "Calb")
+  
+  yeast.gene <- read.dna("gene1Yeast.fasta", format="fasta")
+  yeast.gene <- as.list(as.matrix(cbind(yeast.gene))[1:7,])
+  
+  chars <- selac:::DNAbinToCodonNumeric(yeast.gene)
+  codon.data <- chars[phy$tip.label,]
+  list(input.key="rokasYeast",phy=phy,codon.data=codon.data)
+}
+
 
 lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParams
 test_selac.gamma.quadrature <- function(){
@@ -133,7 +145,7 @@ test_selac_std <- function(phy, codon.data,
                            gamma.type=c("none", "median","quadrature","lognormal" ),
                            nCores=1){
   nuc.model=match.arg(nuc.model)
-  gamma.type=mathc.arg(gamma.type)
+  gamma.type=match.arg(gamma.type)
   if(nuc.model == "HKY") stop("HKY model not implemented for GetLikelihoodSAC_CodonForManyCharGivenAllParams.")
   include.gamma = (gamma.type != "none")
   
