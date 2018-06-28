@@ -46,7 +46,7 @@ prof_obj <- profvis({
   
   
 }, prof_output = paste0(profile_prefix,"_GTR_rokasYeast.Rprof"))
-htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_GTR_rokasYeast.Rprofvis"))
+htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_GTR_rokasYeast.Rprofvis.html"))
 })
 try({
 prof_obj <- profvis({
@@ -73,7 +73,7 @@ prof_obj <- profvis({
   comparison <- identical(round(selac.unrest, 3), -7066.477)
   print(comparison)
 }, prof_output = paste0(profile_prefix,"_UNREST_rokasYeast.Rprof"))
-htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNREST_rokasYeast.Rprofvis"))
+htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNREST_rokasYeast.Rprofvis.html"))
 })
 try({
   prof_obj <- profvis({
@@ -102,7 +102,7 @@ try({
   print(comparison)
 }, prof_output =paste0(profile_prefix,"_UNRESTmedian_rokasYeast.Rprof"))
 
-  htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNRESTmedian_rokasYeast.Rprofvis"))
+  htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNRESTmedian_rokasYeast.Rprofvis.html"))
 })
 try({
   prof_obj <- profvis({
@@ -129,5 +129,5 @@ try({
   comparison <- identical(round(selac_gamma, 3), -6998.618)
   print(comparison)
 }, prof_output = paste0(profile_prefix,"_UNRESTquadrature_rokasYeast.Rprof"))
-  htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNRESTquadrature_rokasYeast.Rprofvis"))
+  htmlwidgets::saveWidget(prof_obj, paste0(profile_prefix,"_UNRESTquadrature_rokasYeast.Rprofvis.html"))
 })

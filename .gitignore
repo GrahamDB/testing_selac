@@ -4,4 +4,5 @@
 .Ruserdata
 x86_64-pc-linux-gnu
 likelihood_test*.Rprof
-likelihood_test*.Rprofvis
+likelihood_test*.Rprofvis.html
+/old/
