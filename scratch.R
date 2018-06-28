@@ -59,6 +59,10 @@ run_standard_profiles<-function(seed=4,nCores=1,ref="v1.6.1-rc1"){
   # seed=4
   gamma.model=c("none","none","median","quadrature")
   # nCores=1
+  temp=as.data.frame(expand.grid(key=1:4,s=seed))
+  nuc.model=nuc.model[temp$key]
+  gamma.model=gamma.model[temp$key]
+  seed=temp$s
   names(nuc.model) <- paste(nuc.model,gamma.model,seed,sep="_")
   setup_selac_for_profiling(ref=ref)
   src_data=load_rokasYeast()
