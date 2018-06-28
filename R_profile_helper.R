@@ -56,7 +56,6 @@ load_rokasYeast <- function(){
 }
 
 
-lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParams
 test_selac.gamma.quadrature <- function(){
   lSAC.c4mc.full(log(c(4*4e-7*.5*5e6, 1.829272, 0.101799, .25, .25, .25, rep(1,5), 5)), 
                  codon.data=codon.data, phy=phy, aa.optim_array=aa.optim, 
@@ -165,6 +164,7 @@ test_selac_std <- function(phy, codon.data,
   if(nuc.model != "UNREST")
     model.params=c(model.params,std.base.freq)
   model.params=c(model.params,std.nuc.params[[nuc.model]])
+  lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParams
   if(include.gamma){
     model.params=c(model.params,std.gamma.shape)
     lSAC.c4mc.full(log(model.params), 
@@ -195,4 +195,59 @@ test_selac_std <- function(phy, codon.data,
 #round(selac.gtr, 3)
 
 #get_test_key <- function(phy.source, nuc.model, gamma.type, nCores, seed)
+
+
+
+run_profile <- function(src_data,nuc.model,gamma.model,seed,nCores){
+  set.seed(seed)
+  cat(sprintf("Start: %s_%s_%s_%s_%i_%i\n",
+              src_data$input.key,
+              nuc.model,
+              gamma.model,
+              selac_release,
+              nCores,
+              seed))
+  profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
+                         src_data$input.key,
+                         nuc.model,
+                         gamma.model,
+                         selac_release,
+                         nCores,
+                         seed)
+  model.LL=NA
+  try({
+    prof_obj <- profvis({
+      model.LL=test_selac_std(src_data$phy,
+                              src_data$codon.data,
+                              nuc.model = nuc.model,
+                              gamma.type = gamma.model,
+                              nCores = nCores)
+    }, prof_output = paste0(profile_prefix,".Rprof"))
+    htmlwidgets::saveWidget(prof_obj, 
+                            file=paste0(profile_prefix,".Rprofvis.html"))
+  })
+  cat(sprintf("End: %s_%s_%s_%s_%i_%i\tLL: %0.3f\n",
+              src_data$input.key,
+              nuc.model,
+              gamma.model,
+              selac_release,
+              nCores,
+              seed,
+              model.LL))
+  if(!file.exists(paste0(src_data$input.key,"_LL_log.csv")))
+    cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
+        file=paste0(src_data$input.key,"_LL_log.csv"),
+        append = T)
+  cat(sprintf("\"%s\",\"%s\",\"%s\",\"%s\",%i,%i,%0.3f\n",
+              src_data$input.key,
+              nuc.model,
+              gamma.model,
+              selac_release,
+              nCores,
+              seed,
+              model.LL),
+      file=paste0(src_data$input.key,"_LL_log.csv"),
+      append = T)
+  model.LL
+}
 
