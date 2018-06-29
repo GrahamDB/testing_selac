@@ -251,3 +251,112 @@ run_profile <- function(src_data,nuc.model,gamma.model,seed,nCores){
   model.LL
 }
 
+run_simple_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
+  setup_selac_for_profiling(ref=ref)
+  profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
+                         "selac19XX",
+                         "GTR",
+                         "noneXquadrature",
+                         selac_release,
+                         3,
+                         seed)
+  src.key="selac19XX"
+  set.seed(seed)
+  cat(sprintf("Start: %s\n",
+              profile_prefix))
+  tree<-read.tree('selac_paper_data/SalichosRokas.tre')
+  
+  result=list(logLik=NA)
+  nuc.model = 'GTR'
+  gamma.type="noneXquadrature"
+  nCores=3
+  try({
+    prof_obj <- profvis({
+  ## start.from.mle set to allow manual specification of fasta files
+  # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
+  # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
+  result <- SelacOptimize(codon.data.path = 'tmp_data/', phy = tree, n.partitions=3,
+                          edge.length = 'optimize', optimal.aa = 'none', data.type='codon',
+                          codon.model = 'GY94', nuc.model = 'GTR', 
+                          include.gamma = FALSE, gamma.type='quadrature', ncats = 4, numcode = 1,
+                          diploid = FALSE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                          n.cores.by.gene  = 3, max.restarts = 1, max.evals=20)
+    }, prof_output = paste0(profile_prefix,".Rprof"))
+    htmlwidgets::saveWidget(prof_obj, 
+                            file=paste0(profile_prefix,".Rprofvis.html"))
+  })
+  cat(sprintf("End: %s\tLL: %0.3f\n",
+              profile_prefix,
+              result$logLik))
+  if(!file.exists(paste0(src.key,"_LL_log.csv")))
+    cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
+        file=paste0(src.key,"_LL_log.csv"),
+        append = T)
+  cat(sprintf("\"%s\",\"%s\",\"%s\",\"%s\",%i,%i,%0.3f\n",
+              src.key,
+              nuc.model,
+              gamma.type,
+              selac_release,
+              nCores,
+              seed,
+              result$logLik),
+      file=paste0(src.key,"_LL_log.csv"),
+      append = T)
+  save(result,file=sprintf('selac_paper_output/yeastSalRokSelacGTRG_quad_%s.Rdata',profile_prefix))
+  result$logLik
+}
+
+run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
+  setup_selac_for_profiling(ref=ref)
+  profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
+                         "selacFULL",
+                         "GTR",
+                         "noneXquadrature",
+                         selac_release,
+                         3,
+                         seed)
+  src.key="selacFULL"
+  set.seed(seed)
+  cat(sprintf("Start: %s\n",
+              profile_prefix))
+  tree<-read.tree('selac_paper_data/SalichosRokas.tre')
+  
+  result=list(logLik=NA)
+  nuc.model = 'GTR'
+  gamma.type="noneXquadrature"
+  nCores=3
+  try({
+    prof_obj <- profvis({
+      ## start.from.mle set to allow manual specification of fasta files
+      # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
+      # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
+      result <- SelacOptimize(codon.data.path = 'selac_paper_data/', phy = tree, n.partitions=3,
+                              edge.length = 'optimize', optimal.aa = 'none', data.type='codon',
+                              codon.model = 'GY94', nuc.model = 'GTR', 
+                              include.gamma = FALSE, gamma.type='quadrature', ncats = 4, numcode = 1,
+                              diploid = FALSE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                              n.cores.by.gene  = 3, max.restarts = 1, max.evals=20)
+    }, prof_output = paste0(profile_prefix,".Rprof"))
+    htmlwidgets::saveWidget(prof_obj, 
+                            file=paste0(profile_prefix,".Rprofvis.html"))
+  })
+  cat(sprintf("End: %s\tLL: %0.3f\n",
+              profile_prefix,
+              result$logLik))
+  if(!file.exists(paste0(src.key,"_LL_log.csv")))
+    cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
+        file=paste0(src.key,"_LL_log.csv"),
+        append = T)
+  cat(sprintf("\"%s\",\"%s\",\"%s\",\"%s\",%i,%i,%0.3f\n",
+              src.key,
+              nuc.model,
+              gamma.type,
+              selac_release,
+              nCores,
+              seed,
+              result$logLik),
+      file=paste0(src.key,"_LL_log.csv"),
+      append = T)
+  save(result,file=sprintf('selac_paper_output/yeastSalRokSelacGTRG_quad_%s.Rdata',profile_prefix))
+  result$logLik
+}

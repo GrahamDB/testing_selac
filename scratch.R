@@ -1,4 +1,4 @@
-source("R_profile_helper.R")
+source("R_profile_helper.R", keep.source = T)
 
 # 
 # run_profile <- function(src_data,nuc.model,gamma.model,seed,nCores){
