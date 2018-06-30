@@ -309,13 +309,13 @@ run_simple_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
 run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
   setup_selac_for_profiling(ref=ref)
   profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
-                         "selacFULL",
+                         "selacFULLb",
                          "GTR",
                          "noneXquadrature",
                          selac_release,
                          3,
                          seed)
-  src.key="selacFULL"
+  src.key="selacFULLb"
   set.seed(seed)
   cat(sprintf("Start: %s\n",
               profile_prefix))
@@ -330,7 +330,7 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
       ## start.from.mle set to allow manual specification of fasta files
       # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
       # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
-      result <- SelacOptimize(codon.data.path = 'selac_paper_data/', phy = tree, n.partitions=3,
+      result <- SelacOptimize(codon.data.path = 'selac_paper_data/', phy = tree, 
                               edge.length = 'optimize', optimal.aa = 'none', data.type='codon',
                               codon.model = 'GY94', nuc.model = 'GTR', 
                               include.gamma = FALSE, gamma.type='quadrature', ncats = 4, numcode = 1,
