@@ -306,14 +306,14 @@ run_simple_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
   result$logLik
 }
 
-run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
+run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=3){
   setup_selac_for_profiling(ref=ref)
   profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
                          "selacFULLb",
                          "GTR",
                          "noneXquadrature",
                          selac_release,
-                         3,
+                         nCores,
                          seed)
   src.key="selacFULLb"
   set.seed(seed)
@@ -324,7 +324,7 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
   result=list(logLik=NA)
   nuc.model = 'GTR'
   gamma.type="noneXquadrature"
-  nCores=3
+  #nCores=3
   try({
     prof_obj <- profvis({
       ## start.from.mle set to allow manual specification of fasta files
@@ -335,8 +335,8 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
                               codon.model = 'GY94', nuc.model = 'GTR', 
                               include.gamma = FALSE, gamma.type='quadrature', ncats = 4, numcode = 1,
                               diploid = FALSE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
-                              n.cores.by.gene  = 3, max.restarts = 1, max.evals=20)
-    }, prof_output = paste0(profile_prefix,".Rprof"))
+                              n.cores.by.gene  = nCores, max.restarts = 1, max.evals=20)
+    }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
     htmlwidgets::saveWidget(prof_obj, 
                             file=paste0(profile_prefix,".Rprofvis.html"))
   })
