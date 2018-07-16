@@ -394,10 +394,10 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
       result <- SelacOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
                               edge.length = 'optimize', optimal.aa = opt.aa.type, data.type='codon',
                               codon.model = 'selac', nuc.model = nuc.model, edge.linked=TRUE,
-                              include.gamma = TRUE, gamma.type='quadrature', ncats = 4, numcode = 2,
+                              include.gamma = TRUE, gamma.type='quadrature', ncats = 4, numcode = 1,
                               diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
                               n.cores.by.gene  = nCores, n.cores.by.gene.by.site=1,
-                              max.restarts = 1, max.evals=5, max.tol=1e-2, max.iterations = 15,
+                              max.restarts = 1, max.evals=20, max.tol=1e-2, max.iterations = 15,
                               fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
                               output.restart.filename=output.file.name)
       # output.restart.filename=output.file.name, start.from.mle = TRUE,
