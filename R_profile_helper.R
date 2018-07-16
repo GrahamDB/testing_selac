@@ -363,11 +363,11 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
 
 run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=3){
   setup_selac_for_profiling(ref=ref)
-  src.key="selacFULLb"
+  src.key="ecoliTEST"
   nuc.model = 'UNREST'
   gamma.type="quadrature"
   profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
-                         "ecoliTEST",
+                         src.key,
                          nuc.model,
                          gamma.type,
                          selac_release,
@@ -397,11 +397,12 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
                               include.gamma = TRUE, gamma.type='quadrature', ncats = 4, numcode = 2,
                               diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
                               n.cores.by.gene  = nCores, n.cores.by.gene.by.site=1,
-                              max.restarts = 1, max.evals=5, max.tol=1e-2,max.initial.cond=1, max.iterations = 15,
-                              fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE, conv.crit = 0.01,
-                              output.restart.filename=output.file.name, start.from.mle = TRUE,
-                              mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
-    }, prof_output = paste0(profile_prefix,".Rprof"),interval=60)
+                              max.restarts = 1, max.evals=5, max.tol=1e-2, max.iterations = 15,
+                              fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
+                              output.restart.filename=output.file.name)
+      # output.restart.filename=output.file.name, start.from.mle = TRUE,
+      # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
+    }, prof_output = paste0(profile_prefix,".Rprof"),interval=1)
     save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
     htmlwidgets::saveWidget(prof_obj, 
                             file=paste0(profile_prefix,".Rprofvis.html"))
