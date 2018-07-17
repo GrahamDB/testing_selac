@@ -337,6 +337,7 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
                               diploid = FALSE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
                               n.cores.by.gene  = nCores, max.restarts = 1, max.evals=20)
     }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+    save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
     htmlwidgets::saveWidget(prof_obj, 
                             file=paste0(profile_prefix,".Rprofvis.html"))
   })
@@ -402,7 +403,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
                               output.restart.filename=output.file.name)
       # output.restart.filename=output.file.name, start.from.mle = TRUE,
       # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
-    }, prof_output = paste0(profile_prefix,".Rprof"),interval=1)
+    }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
     save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
     htmlwidgets::saveWidget(prof_obj, 
                             file=paste0(profile_prefix,".Rprofvis.html"))
