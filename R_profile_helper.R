@@ -534,7 +534,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
         # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
         result <- SelacOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
                                 edge.length = 'optimize', optimal.aa = opt.aa.type, data.type='codon',
-                                codon.model = 'codon.model', nuc.model = nuc.model, edge.linked=TRUE,
+                                codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
                                 include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
                                 diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
                                 n.cores.by.gene  = nCores, n.cores.by.gene.by.site=1,
