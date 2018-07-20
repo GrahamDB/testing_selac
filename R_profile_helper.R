@@ -436,6 +436,147 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
 }
 
 
+
+run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
+                                   seed=sample.int(1e6,1),
+                                   codon.model=c("selac","none","GY94","YN98"),
+                                   nuc.model=c("GTR","UNREST","JC"),
+                                   ref="v1.6.1-rc1", 
+                                   include.gamma=T,
+                                   gamma.type=c("quadrature","median","lognormal","none"),
+                                   nCores=1){
+  setup_selac_for_profiling(ref=ref)
+  mode=match.arg(mode)
+  src.key=paste0("ecoli",mode)
+  codon.model = match.arg(codon.model)
+  nuc.model = match.arg(nuc.model)
+  if(!include.gamma)
+    { gamma.type="quadrature"; gamma.mode="none";}
+  else {
+    gamma.mode=gamma.type=match.arg(gamma.type)
+  } 
+  if(gamma.type=="none"){
+    include.gamma=F
+    gamma.type="quadrature"
+    gamma.mode="none"
+  }
+    
+  profile_prefix=sprintf("%s_%s_%s_%s_%s_%i_%i",
+                         src.key,
+                         codon.model,
+                         nuc.model,
+                         gamma.mode,
+                         selac_release,
+                         nCores,
+                         seed)
+  set.seed(seed)
+  cat(sprintf("Start: %s\n",
+              profile_prefix))
+  tree<-read.tree('kosi07_data/kosi07_codonphyml_tree_TEM.newick')
+  fasta.file="kosi07_data/aligned_KOSI07_TEM.fasta"
+  output.file.name=sprintf('ecoli_output/%s_restart.Rdata',profile_prefix)
+  result=list(logLik=NA)
+  opt.aa.type <- "optimize"
+  # random starting values
+  starting.vals <- matrix(runif(n = 15, min = 0.01, max = 5), ncol = 15, nrow = 1)
+  tree$edge.length <- runif(nrow(tree$edge), 0.01, 3)
+  
+  #nCores=3
+  if(mode=="TEST"){
+  try({
+    prof_obj <- profvis({
+      ## start.from.mle set to allow manual specification of fasta files
+      # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
+      # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
+      result <- SelacOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
+                              edge.length = 'optimize', optimal.aa = opt.aa.type, data.type='codon',
+                              codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
+                              include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
+                              diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                              n.cores.by.gene  = nCores, n.cores.by.gene.by.site=1,
+                              max.restarts = 1, max.evals=20, max.tol=1e-2, max.iterations = 15,
+                              fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
+                              output.restart.filename=output.file.name)
+      # output.restart.filename=output.file.name, start.from.mle = TRUE,
+      # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
+    }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+    save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+    # htmlwidgets::saveWidget(prof_obj, 
+    #                         file=paste0(profile_prefix,".Rprofvis.html"))
+  })
+  } else if(mode=="SHORTTEST"){
+    try({
+      prof_obj <- profvis({
+        ## start.from.mle set to allow manual specification of fasta files
+        # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
+        # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
+        result <- SelacOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
+                                edge.length = 'optimize', optimal.aa = opt.aa.type, data.type='codon',
+                                codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
+                                include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
+                                diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                                n.cores.by.gene  = nCores, n.cores.by.gene.by.site=1,
+                                max.restarts = 1, max.evals=1, max.tol=1e-2, max.iterations = 1,
+                                fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
+                                output.restart.filename=output.file.name)
+        # output.restart.filename=output.file.name, start.from.mle = TRUE,
+        # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+      save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+      # htmlwidgets::saveWidget(prof_obj, 
+      #                         file=paste0(profile_prefix,".Rprofvis.html"))
+    })
+  }else if(mode=="SHORT"){
+    try({
+      prof_obj <- profvis({
+        ## start.from.mle set to allow manual specification of fasta files
+        # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
+        # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
+        result <- SelacOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
+                                edge.length = 'optimize', optimal.aa = opt.aa.type, data.type='codon',
+                                codon.model = 'codon.model', nuc.model = nuc.model, edge.linked=TRUE,
+                                include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
+                                diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                                n.cores.by.gene  = nCores, n.cores.by.gene.by.site=1,
+                                max.restarts = 1, max.evals=1, max.tol=1e-2, max.iterations = 1,
+                                fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
+                                output.restart.filename=output.file.name)
+        # output.restart.filename=output.file.name, start.from.mle = TRUE,
+        # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+      save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+      # htmlwidgets::saveWidget(prof_obj, 
+      #                         file=paste0(profile_prefix,".Rprofvis.html"))
+    })
+  }
+  cat(sprintf("End: %s\tLL: %0.3f\n",
+              profile_prefix,
+              result$logLik))
+  if(!file.exists(paste0(src.key,"_LL_log.csv")))
+    cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
+        file=paste0(src.key,"_",codon.model,"_LL_log.csv"),
+        append = T)
+  cat(sprintf("\"%s\",\"%s\",\"%s\",\"%s\",%i,%i,%0.3f\n",
+              src.key,
+              nuc.model,
+              gamma.mode,
+              selac_release,
+              nCores,
+              seed,
+              result$logLik),
+      file=paste0(src.key,"_",codon.model,"_LL_log.csv"),
+      append = T)
+  cat("SELAC Done. saving results\n")
+  
+  result$seed <- seed
+  result$startingValues <- starting.vals
+  result$startingTree <- tree
+  
+  save(result,file=sprintf('ecoli_output/%s_result.Rdata',profile_prefix))
+  result$logLik
+}
+
+
 run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=1){
   setup_selac_for_profiling(ref=ref)
   src.key="ecoliDEBUG"

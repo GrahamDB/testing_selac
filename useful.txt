@@ -1,0 +1,17 @@
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> source("R_profile_helper.R", keep.source = T)
+[1] "/home/asterion/R/x86_64-pc-linux-gnu-library/3.4"
+[2] "/usr/local/lib/R/site-library"                   
+[3] "/usr/lib/R/site-library"                         
+[4] "/usr/lib/R/library"                              
+Loading required package: profvis
+NULL
+> run_full_selac_optimize(seed=1053, nCores =1)
+[1] "v1.6.1-rc1"
+
+
+
+( date; time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_full_selac_optimize(seed=1053, nCores =1, ref="744c6c8")'; date ;) |& tee -a log_profile_selacFULLb.txt

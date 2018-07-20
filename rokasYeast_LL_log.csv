@@ -1,0 +1,11 @@
+SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
+"rokasYeast","GTR","none","64ea1e3",1,25,NA
+"rokasYeast","GTR","none","64ea1e3",1,25,NA
+"rokasYeast","GTR","none","744c6c8",1,4,-7066.477
+"rokasYeast","UNREST","none","744c6c8",1,4,-7066.477
+"rokasYeast","GTR","median","744c6c8",1,4,-6999.538
+"rokasYeast","GTR","quadrature","744c6c8",1,4,-6998.618
+"rokasYeast","GTR","none","744c6c8",1,4,-7066.477
+"rokasYeast","UNREST","none","744c6c8",1,4,-7066.477
+"rokasYeast","GTR","median","744c6c8",1,4,-6999.538
+"rokasYeast","GTR","quadrature","744c6c8",1,4,-6998.618
