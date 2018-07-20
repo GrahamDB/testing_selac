@@ -253,6 +253,7 @@ comparison.lattice.layer <-
     profile_prefix=sprintf("%s_%s_%s_%s_%i_%i",
                            src.key, nuc.model, gamma.type,
                            selac_release, nCores, seed)
+    
     if(!file.exists(paste0(profile_prefix,".Rprof"))){
       res <- numeric(0)
       dim(res) <- c(0,5,1,1,1,1)
@@ -265,8 +266,14 @@ comparison.lattice.layer <-
                                             seed=paste0("S",seed))
       return(res)
     }
-    rprof_summary <- custum_summaryRprof(paste0(profile_prefix,".Rprof"),
-                                        lines="hide", basenames = 3, memory = "both")[["by.self"]]
+    if(file.exists(paste0(profile_prefix,"_Rprofsummary.RData")) &&
+       (file.mtime(paste0(profile_prefix,"_Rprofsummary.RData")) > file.mtime(paste0(profile_prefix,".Rprof")) )  ){
+      load(file=paste0(profile_prefix,"_Rprofsummary.RData"))
+    } else {
+      rprof_summary <- custum_summaryRprof(paste0(profile_prefix,".Rprof"),
+                                           lines="hide", basenames = 3, memory = "both")[["by.self"]]
+      save(rprof_summary, file=paste0(profile_prefix,"_Rprofsummary.RData"))
+    }
     if(!is.null(min.self.time))
       rprof_summary <- rprof_summary[rprof_summary$self.time>=min.self.time,]
     if(!is.null(min.self.pct))
@@ -378,59 +385,77 @@ if(F){
   comparison.lattice("selacFULLb","GTR","noneXquadrature",c("v1.6.1-rc1","744c6c8","dd94866"),1,c(3000:3009),min.self.pct = 8)
 }
 if(F){
-  system.time({comparison.lattice("selacFULLb","GTR","noneXquadrature",c("v1.6.1-rc1","744c6c8","dd94866"),1,c(3000:3020),min.total.time = 1000) -> test_result_mat_full;}) dim(test_result_mat3)
-system.time({comparison.lattice("selacFULLb","GTR","noneXquadrature",c("v1.6.1-rc1","744c6c8","dd94866"),1,c(3000:3020),min.total.time = 1000) -> test_result_mat_full;}); dim(test_result_mat3)
-dim(test_result_mat_full)
-save(test_result_mat_full,file="profile_yeast_summary.RData"); apply(test_result_mat_full,1:5,mean,na.rm=T)[,c(1,3),1,,1]
-system.time({comparison.lattice("selacFULLb","GTR","noneXquadrature",c("v1.6.1-rc1","744c6c8","dd94866"),
-                                1,c(3000:3020),min.total.time = 100) -> test_result_mat_full;}); 
-dim(test_result_mat_full); save(test_result_mat_full,file="profile_yeast_summary.RData"); 
-apply(test_result_mat_full,1:5,mean,na.rm=T)[,c(1,3),1,,1] -> test_result_means; 
-test_result_means[test_result_means[,1,1]>700|test_result_means[,1,2]>700|test_result_means[,1,3]>700  ,,]
-sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,] ))
-warnings()
-sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,]>700 ))
-which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,]>700 )))
-which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,]>700 )))->foo
-test_result_means[foo,1,]
-test_result_means[foo,2,]
-which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,2,]>700 )))->bar
-test_result_means[bar,2,]
-test_result_means[bar,1,]
-test_result_means[bar,2,]
-test_result_means[bar,1,]
-write.csv(test_result_means[bar,1,],file="profile_yeast_21runMeanTime_self.csv")
-which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,2,]>600 )))->bar
-test_result_means[bar,1,]
-write.csv(test_result_means[bar,1,],file="profile_yeast_21runMeanTime_self.csv")
-write.csv(test_result_means[bar,2,],file="profile_yeast_21runMeanTime_total.csv")
-bar
-test_result_means[names(bar),1,]
-all.equal(test_result_means[names(bar),1,],test_result_means[bar,1,])
-apply(test_result_mat_full,1:5,mean,na.rm=T)[,c(5),1,,1] -> test_result_memory;
-test_result_memory[names(bar),]
-write.csv(test_result_memory[names(bar),],file="profile_yeast_21runMeanTime_memory.csv")
-apply(test_result_mat_full,1:5,sd,na.rm=T)[,c(1,3),1,,1] -> test_result_time_sd;
-apply(test_result_mat_full,1:5,sd,na.rm=T)[,c(5),1,,1] -> test_result_memory_sd;
-test_result_time_sd[names(bar),1,]
-test_result_time_sd[names(bar),2,]
-apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,c(1,5),1,,1] -> test_result_counts;
-all.equal(test_result_counts[,1,],test_result_counts[,2,])
-apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,1,1,,1] -> test_result_counts;
-test_result_counts
-write.csv(test_result_counts[names(bar),],file="profile_yeast_21run_counts.csv")
-
-write.csv(test_result_counts[,],file="profile_yeast_21run_counts_all.csv")
-write.csv(apply(test_result_mat_full,1:5,mean,na.rm=T)[,,1,,1],file="profile_yeast_21run_means_all.csv")
-write.csv(apply(test_result_mat_full,1:5,sd,na.rm=T)[,,1,,1],file="profile_yeast_21run_stDevs_all.csv")
-
-apply(test_result_counts>10,1,any)
-names(which(apply(test_result_counts>10,1,any)))-> atleast10
-names(which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,2,]>600 ))))->totalTime600
-
-apply(test_result_mat_full,1:5,mean,na.rm=T)[intersect(atleast10,totalTime600),,1,,1]->test_result_imp_means
-# aperm(test_result_imp_means,c(1,3,2))
-write.csv( aperm(test_result_imp_means,c(1,3,2)) ,file="profile_yeast_21run_means_all_alt.csv")
-apply(test_result_mat_full,1:5,sd,na.rm=T)[intersect(atleast10,totalTime600),,1,,1]->test_result_imp_sds
-write.csv( aperm(test_result_imp_sds,c(1,3,2)) ,file="profile_yeast_21run_stDevs_all_alt.csv")
+  system.time({comparison.lattice("selacFULLb","GTR","noneXquadrature",
+                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
+                                  c(3000:3020),min.total.time = 1000) -> test_result_mat_full;})
+  dim(test_result_mat3)
+  system.time({comparison.lattice("selacFULLb","GTR","noneXquadrature",c("v1.6.1-rc1","744c6c8","dd94866"),1,c(3000:3020),min.total.time = 1000) -> test_result_mat_full;}); dim(test_result_mat3)
+  dim(test_result_mat_full)
+  save(test_result_mat_full,file="profile_yeast_summary.RData"); apply(test_result_mat_full,1:5,mean,na.rm=T)[,c(1,3),1,,1]
+  system.time({comparison.lattice("selacFULLb","GTR","noneXquadrature",c("v1.6.1-rc1","744c6c8","dd94866"),
+                                  1,c(3000:3020),min.total.time = 100) -> test_result_mat_full;}); 
+  dim(test_result_mat_full); save(test_result_mat_full,file="profile_yeast_summary.RData"); 
+  apply(test_result_mat_full,1:5,mean,na.rm=T)[,c(1,3),1,,1] -> test_result_means; 
+  test_result_means[test_result_means[,1,1]>700|test_result_means[,1,2]>700|test_result_means[,1,3]>700  ,,]
+  sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,] ))
+  warnings()
+  sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,]>700 ))
+  which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,]>700 )))
+  which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,1,]>700 )))->foo
+  test_result_means[foo,1,]
+  test_result_means[foo,2,]
+  which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,2,]>700 )))->bar
+  test_result_means[bar,2,]
+  test_result_means[bar,1,]
+  test_result_means[bar,2,]
+  test_result_means[bar,1,]
+  write.csv(test_result_means[bar,1,],file="profile_yeast_21runMeanTime_self.csv")
+  which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,2,]>600 )))->bar
+  test_result_means[bar,1,]
+  write.csv(test_result_means[bar,1,],file="profile_yeast_21runMeanTime_self.csv")
+  write.csv(test_result_means[bar,2,],file="profile_yeast_21runMeanTime_total.csv")
+  bar
+  test_result_means[names(bar),1,]
+  all.equal(test_result_means[names(bar),1,],test_result_means[bar,1,])
+  apply(test_result_mat_full,1:5,mean,na.rm=T)[,c(5),1,,1] -> test_result_memory;
+  test_result_memory[names(bar),]
+  write.csv(test_result_memory[names(bar),],file="profile_yeast_21runMeanTime_memory.csv")
+  apply(test_result_mat_full,1:5,sd,na.rm=T)[,c(1,3),1,,1] -> test_result_time_sd;
+  apply(test_result_mat_full,1:5,sd,na.rm=T)[,c(5),1,,1] -> test_result_memory_sd;
+  test_result_time_sd[names(bar),1,]
+  test_result_time_sd[names(bar),2,]
+  apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,c(1,5),1,,1] -> test_result_counts;
+  all.equal(test_result_counts[,1,],test_result_counts[,2,])
+  apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,1,1,,1] -> test_result_counts;
+  test_result_counts
+  write.csv(test_result_counts[names(bar),],file="profile_yeast_21run_counts.csv")
+  
+  write.csv(test_result_counts[,],file="profile_yeast_21run_counts_all.csv")
+  write.csv(apply(test_result_mat_full,1:5,mean,na.rm=T)[,,1,,1],file="profile_yeast_21run_means_all.csv")
+  write.csv(apply(test_result_mat_full,1:5,sd,na.rm=T)[,,1,,1],file="profile_yeast_21run_stDevs_all.csv")
+  
+  apply(test_result_counts>10,1,any)
+  names(which(apply(test_result_counts>10,1,any)))-> atleast10
+  names(which(sapply(rownames(test_result_means),function(x) any(test_result_means[x,2,]>600 ))))->totalTime600
+  
+  apply(test_result_mat_full,1:5,mean,na.rm=T)[intersect(atleast10,totalTime600),,1,,1]->test_result_imp_means
+  # aperm(test_result_imp_means,c(1,3,2))
+  write.csv( aperm(test_result_imp_means,c(1,3,2)) ,file="profile_yeast_21run_means_all_alt.csv")
+  apply(test_result_mat_full,1:5,sd,na.rm=T)[intersect(atleast10,totalTime600),,1,,1]->test_result_imp_sds
+  write.csv( aperm(test_result_imp_sds,c(1,3,2)) ,file="profile_yeast_21run_stDevs_all_alt.csv")
+}
+if(F){
+  system.time({comparison.lattice("ecoliTEST","UNREST","quadrature",
+                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
+                                  c(4002),min.total.time = 10) -> test_result_mat_full;})
+  system.time({comparison.lattice("ecoliTEST","UNREST","quadrature",
+                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
+                                  c(4002),min.total.time = 10) -> test_result_mat_fullb;})
+  print(all.equal(test_result_mat_full,test_result_mat_fullb))
+  # apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,1,1,,1] -> test_result_counts;
+  # names(which(apply(test_result_counts>10,1,any)))-> atleast10
+  print(test_result_mat_full[,1,1,,1,1])
+  length(names(which(sapply(rownames(test_result_mat_full),function(x) any(test_result_mat_full[x,3,1,,1,1]>600 ))))->totalTime600)
+  tmp_foo<-aperm(test_result_mat_full[totalTime600,,1,,1,1],c(1,3,2))
+  print(tmp_foo[order(apply(tmp_foo[,,"total.time"],1,max,na.rm=T),decreasing = T),, ])
 }
