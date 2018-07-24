@@ -1,0 +1,6 @@
+for iter_nuc in GTR UNREST
+do for iter_gamma in quadrature none median lognormal 
+  do time ./run_many_ecoli_profile.sh SHORT 5100 5129 $iter_gamma $iter_nuc  ;
+  done 
+done 
+ls -lht log_profile_ecoli*.txt

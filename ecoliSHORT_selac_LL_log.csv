@@ -545,3 +545,4 @@ SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
 "ecoliSHORT","UNREST","none","v1.6.1-rc1",1,5126,-12962.809
 "ecoliSHORT","UNREST","median","dd94866",1,5100,-10676.844
 "ecoliSHORT","UNREST","median","744c6c8",1,5100,-10676.844
+"ecoliSHORT","UNREST","median","v1.6.1-rc1",1,5100,-10676.844
