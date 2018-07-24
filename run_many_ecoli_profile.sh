@@ -35,14 +35,14 @@ profile_run_combo () {
   rA="dd94866"
   rB="744c6c8"
   rC="v1.6.1-rc1"
-  profile_run "$((seed_offset+0))" "$rA" "$rB" "$rC"
-  profile_run "$((seed_offset+3))" "$rB" "$rC" "$rA"
-  profile_run "$((seed_offset+4))" "$rC" "$rA" "$rB"
-  profile_run "$((seed_offset+1))" "$rA" "$rC" "$rB"
-  profile_run "$((seed_offset+5))" "$rC" "$rB" "$rA"
-  profile_run "$((seed_offset+2))" "$rB" "$rA" "$rC"
+  profile_run_seq "$((seed_offset+0))" "$rA" "$rB" "$rC"
+  profile_run_seq "$((seed_offset+3))" "$rB" "$rC" "$rA"
+  profile_run_seq "$((seed_offset+4))" "$rC" "$rA" "$rB"
+  profile_run_seq "$((seed_offset+1))" "$rA" "$rC" "$rB"
+  profile_run_seq "$((seed_offset+5))" "$rC" "$rB" "$rA"
+  profile_run_seq "$((seed_offset+2))" "$rB" "$rA" "$rC"
 }
-seq $start 6 $stop | while read iter_seed; do profile_run "$iter_seed"; done
+seq $start 6 $stop | while read iter_seed; do profile_run_combo "$iter_seed"; done
 
 #( date;
 #time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_ecoli_profile_mode(seed='$iter_seed', '"$sys_args"', ref="dd94866")';

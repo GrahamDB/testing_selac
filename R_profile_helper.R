@@ -266,7 +266,7 @@ run_simple_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
               profile_prefix))
   tree<-read.tree('selac_paper_data/SalichosRokas.tre')
   
-  result=list(logLik=NA)
+  result=list(loglik=NA)
   nuc.model = 'GTR'
   gamma.type="noneXquadrature"
   nCores=3
@@ -287,7 +287,7 @@ run_simple_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
   })
   cat(sprintf("End: %s\tLL: %0.3f\n",
               profile_prefix,
-              result$logLik))
+              result$loglik))
   if(!file.exists(paste0(src.key,"_LL_log.csv")))
     cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
         file=paste0(src.key,"_LL_log.csv"),
@@ -299,11 +299,11 @@ run_simple_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1"){
               selac_release,
               nCores,
               seed,
-              result$logLik),
+              result$loglik),
       file=paste0(src.key,"_LL_log.csv"),
       append = T)
   save(result,file=sprintf('selac_paper_output/yeastSalRokSelacGTRG_quad_%s.Rdata',profile_prefix))
-  result$logLik
+  result$loglik
 }
 
 run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=3){
@@ -321,7 +321,7 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
               profile_prefix))
   tree<-read.tree('selac_paper_data/SalichosRokas.tre')
   
-  result=list(logLik=NA)
+  result=list(loglik=NA)
   nuc.model = 'GTR'
   gamma.type="noneXquadrature"
   #nCores=3
@@ -343,7 +343,7 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
   })
   cat(sprintf("End: %s\tLL: %0.3f\n",
               profile_prefix,
-              result$logLik))
+              result$loglik))
   if(!file.exists(paste0(src.key,"_LL_log.csv")))
     cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
         file=paste0(src.key,"_LL_log.csv"),
@@ -355,11 +355,11 @@ run_full_selac_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
               selac_release,
               nCores,
               seed,
-              result$logLik),
+              result$loglik),
       file=paste0(src.key,"_LL_log.csv"),
       append = T)
   save(result,file=sprintf('selac_paper_output/yeastSalRokSelacGTRG_quad_%s.Rdata',profile_prefix))
-  result$logLik
+  result$loglik
 }
 
 run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=3){
@@ -380,7 +380,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
   tree<-read.tree('kosi07_data/kosi07_codonphyml_tree_TEM.newick')
   fasta.file="kosi07_data/aligned_KOSI07_TEM.fasta"
   output.file.name=sprintf('ecoli_output/%s_restart.Rdata',profile_prefix)
-  result=list(logLik=NA)
+  result=list(loglik=NA)
   opt.aa.type <- "optimize"
   # random starting values
   starting.vals <- matrix(runif(n = 15, min = 0.01, max = 5), ncol = 15, nrow = 1)
@@ -410,7 +410,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
   })
   cat(sprintf("End: %s\tLL: %0.3f\n",
               profile_prefix,
-              result$logLik))
+              result$loglik))
   if(!file.exists(paste0(src.key,"_LL_log.csv")))
     cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
         file=paste0(src.key,"_LL_log.csv"),
@@ -422,7 +422,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
               selac_release,
               nCores,
               seed,
-              result$logLik),
+              result$loglik),
       file=paste0(src.key,"_LL_log.csv"),
       append = T)
   cat("SELAC Done. saving results\n")
@@ -432,7 +432,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
   result$startingTree <- tree
   
   save(result,file=sprintf('ecoli_output/%s_result.Rdata',profile_prefix))
-  result$logLik
+  result$loglik
 }
 
 
@@ -469,13 +469,25 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
                          selac_release,
                          nCores,
                          seed)
+  if(file.exists(sprintf('ecoli_output/%s_result.Rdata',profile_prefix))){
+    try({
+      load(file=sprintf('ecoli_output/%s_result.Rdata',profile_prefix))
+      if(!is.null(result$loglik) && is.finite(result$loglik)) {
+        cat(sprintf("Skip: %s\n",
+                    profile_prefix))
+        return(result$loglik)
+      } 
+    })
+    cat(sprintf("Rebuilding: %s\n",
+                profile_prefix))
+  }
   set.seed(seed)
   cat(sprintf("Start: %s\n",
               profile_prefix))
   tree<-read.tree('kosi07_data/kosi07_codonphyml_tree_TEM.newick')
   fasta.file="kosi07_data/aligned_KOSI07_TEM.fasta"
   output.file.name=sprintf('ecoli_output/%s_restart.Rdata',profile_prefix)
-  result=list(logLik=NA)
+  result=list(loglik=NA)
   opt.aa.type <- "optimize"
   # random starting values
   starting.vals <- matrix(runif(n = 15, min = 0.01, max = 5), ncol = 15, nrow = 1)
@@ -551,8 +563,8 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
   }
   cat(sprintf("End: %s\tLL: %0.3f\n",
               profile_prefix,
-              result$logLik))
-  if(!file.exists(paste0(src.key,"_LL_log.csv")))
+              result$loglik))
+  if(!file.exists(paste0(src.key,"_",codon.model,"_LL_log.csv")))
     cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
         file=paste0(src.key,"_",codon.model,"_LL_log.csv"),
         append = T)
@@ -563,7 +575,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
               selac_release,
               nCores,
               seed,
-              result$logLik),
+              result$loglik),
       file=paste0(src.key,"_",codon.model,"_LL_log.csv"),
       append = T)
   cat("SELAC Done. saving results\n")
@@ -573,11 +585,11 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
   result$startingTree <- tree
   
   save(result,file=sprintf('ecoli_output/%s_result.Rdata',profile_prefix))
-  result$logLik
+  result$loglik
 }
 
 
-run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=1){
+run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCores=1, auto.skip=T){
   setup_selac_for_profiling(ref=ref)
   src.key="ecoliDEBUG"
   nuc.model = 'UNREST'
@@ -589,13 +601,25 @@ run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.
                          selac_release,
                          nCores,
                          seed)
+  if(file.exists(sprintf('ecoli_output/%s_result.Rdata',profile_prefix))){
+    try({
+    load(file=sprintf('ecoli_output/%s_result.Rdata',profile_prefix))
+      if(!is.null(result$loglik) && is.finite(result$loglik)) {
+        cat(sprintf("Skip: %s\n",
+                    profile_prefix))
+        return(result$loglik)
+      } 
+    })
+    cat(sprintf("Rebuilding: %s\n",
+                profile_prefix))
+  }
   set.seed(seed)
   cat(sprintf("Start: %s\n",
               profile_prefix))
   tree<-read.tree('kosi07_data/kosi07_codonphyml_tree_TEM.newick')
   fasta.file="kosi07_data/aligned_KOSI07_TEM.fasta"
   output.file.name=sprintf('ecoli_output/%s_restart.Rdata',profile_prefix)
-  result=list(logLik=NA)
+  result=list(loglik=NA)
   opt.aa.type <- "optimize"
   # random starting values
   starting.vals <- matrix(runif(n = 15, min = 0.01, max = 5), ncol = 15, nrow = 1)
@@ -625,7 +649,7 @@ run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.
   # })
   cat(sprintf("End: %s\tLL: %0.3f\n",
               profile_prefix,
-              result$logLik))
+              result$loglik))
   if(!file.exists(paste0(src.key,"_LL_log.csv")))
     cat("SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL\n",
         file=paste0(src.key,"_LL_log.csv"),
@@ -637,7 +661,7 @@ run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.
               selac_release,
               nCores,
               seed,
-              result$logLik),
+              result$loglik),
       file=paste0(src.key,"_LL_log.csv"),
       append = T)
   cat("SELAC Done. saving results\n")
@@ -647,5 +671,5 @@ run_test_ecoli_optimize_no_profile <- function(seed=sample.int(1e6,1),ref="v1.6.
   result$startingTree <- tree
   
   save(result,file=sprintf('ecoli_output/%s_result.Rdata',profile_prefix))
-  result$logLik
+  result$loglik
 }
