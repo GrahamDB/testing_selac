@@ -15,7 +15,7 @@ time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_ecoli
 date ;) |& tee -a "${out_file}"
 sleep 5;
 }
-while [[ "$#" -gt 0 ]] do
+while [[ "$#" -gt 0 ]]; do
   profile_run "${sole_SEED}" "$1"
   shift 1
 done
