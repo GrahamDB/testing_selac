@@ -38,3 +38,20 @@ OptimizeEdgeLengths <- function(x, par.mat, codon.site.data, codon.site.counts, 
   return(likelihood)
 }
 
+results.edge.final <- function(...) {
+  nloptr(x0=log(phy$edge.length), 
+         eval_f = OptimizeEdgeLengths, 
+         ub=upper.edge, lb=lower.edge, opts=opts.edge, 
+         par.mat=mle.pars.mat, 
+         codon.site.data=site.pattern.data.list, 
+         codon.site.counts=site.pattern.count.list, 
+         data.type=data.type, codon.model=codon.model, n.partitions=n.partitions, 
+         nsites.vector=nsites.vector, 
+         index.matrix=index.matrix, phy=phy, aa.optim_array=aa.optim.list, root.p_array=NULL, 
+         codon.freq.by.aa=codon.freq.by.aa.list, codon.freq.by.gene=codon.freq.by.gene.list, 
+         numcode=numcode, diploid=diploid, aa.properties=aa.properties, volume.fixed.value=cpv.starting.parameters[3], 
+         nuc.model=nuc.model, codon.index.matrix=codon.index.matrix, edge.length=edge.length, 
+         include.gamma=include.gamma, gamma.type=gamma.type, ncats=ncats, k.levels=k.levels, 
+         logspace=TRUE, verbose=verbose, n.cores.by.gene=n.cores.by.gene, n.cores.by.gene.by.site=n.cores.by.gene.by.site,
+         estimate.importance=FALSE, neglnl=TRUE, HMM=FALSE)
+}
