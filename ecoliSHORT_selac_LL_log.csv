@@ -562,3 +562,6 @@ SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
 "ecoliSHORT","UNREST","none","d60d4c6",1,1056,-12442.479
 "ecoliSHORT","UNREST","none","d60d4c6",1,2053,-12447.335
 "ecoliSHORT","UNREST","none","d60d4c6",1,2054,-12041.334
+"ecoliSHORT","GTR","none","d60d4c6",1,5100,-11967.368
+"ecoliSHORT","GTR","none","38a4c36",1,5100,-11967.369
+"ecoliSHORT","GTR","none","d60d4c6",1,5103,-12922.679

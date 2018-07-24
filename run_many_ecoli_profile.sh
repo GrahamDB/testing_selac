@@ -23,7 +23,7 @@ profile_run () {
   ( date;
 time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_ecoli_profile_mode(seed='$1', '"$sys_args"', ref="'"$2"'")';
 date ;) |& tee -a "${out_file}"
-sleep 30;
+sleep 5;
 }
 profile_run_seq () {
   profile_run "$1" "$2"
