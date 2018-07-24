@@ -1,0 +1,5 @@
+SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
+"ecoliSHORTTEST","UNREST","quadrature","744c6c8",1,4000,-10826.998
+"ecoliSHORTTEST","UNREST","quadrature","dd94866",1,4000,-10826.998
+"ecoliSHORTTEST","UNREST","quadrature","dd94866",1,4001,-10879.913
+"ecoliSHORTTEST","UNREST","quadrature","v1.6.1-rc1",1,4000,-10826.998
