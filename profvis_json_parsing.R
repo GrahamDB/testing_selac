@@ -524,12 +524,12 @@ if(F){
                                   c("none","median",  "quadrature","lognormal"),
                                   c("v1.6.1-rc1","744c6c8","dd94866","38a4c36",
                                     "8f13a5a","9e90977"),1,
-                                  c(5100:5105)) -> test_result_mat_full;})
+                                  c(5100:5129)) -> test_result_mat_full;})
   system.time({comparison.lattice("ecoliSHORT_selac",c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
                                   c("v1.6.1-rc1","744c6c8","dd94866","38a4c36",
                                     "8f13a5a","9e90977"),1,
-                                  c(5100:5105)) -> test_result_mat_fullb;})
+                                  c(5100:5129)) -> test_result_mat_fullb;})
   print(all.equal(test_result_mat_full,test_result_mat_fullb))
   dimnames(test_result_mat_full)[[4]][-1]<-paste0("r",dimnames(test_result_mat_full)[[4]][-1])
   dim(test_result_mat_full)
@@ -550,17 +550,23 @@ if(F){
   print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
                 ,,"ecoliSHORT_selac_GTR_none" ])
   tmp_bar <- aperm(test_result_means[totalTime300,,,],c(1,3,4,2))
+  tmp_bar_n <- aperm(test_result_counts[totalTime300,,],c(1,2,3))
+  tmp_bar_n <- tmp_bar_n[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),, ]
   tmp_bar <- tmp_bar[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),,, ]
   tmp_bar_names <- dimnames(tmp_bar)
   tmp_bar_names2 <- expand.grid(tmp_bar_names[[1]],tmp_bar_names[[2]])
   tmp_bar_rownames <- paste(tmp_bar_names2[[1]],tmp_bar_names2[[2]],sep="." )
   tmp_bar_names2 <- expand.grid(tmp_bar_names[[3]],tmp_bar_names[[4]])
   tmp_bar_colnames <-paste(tmp_bar_names2[[1]],tmp_bar_names2[[2]],sep="." )
+  dim(tmp_bar_n)=c(prod(dim(tmp_bar_n)[1:2]),prod(dim(tmp_bar_n)[-(1:2)]))
   dim(tmp_bar)=c(prod(dim(tmp_bar)[1:2]),prod(dim(tmp_bar)[-(1:2)]))
   dim(tmp_bar)
   rownames(tmp_bar)=tmp_bar_rownames
+  rownames(tmp_bar_n)=tmp_bar_rownames
   colnames(tmp_bar)=tmp_bar_colnames
+  colnames(tmp_bar_n)=tmp_bar_names[[3]]
   names(dimnames(tmp_bar))<- paste(names(tmp_bar_names)[c(1,3)],names(tmp_bar_names)[c(2,4)],sep=".")
   write.csv(tmp_bar,file="selac_revision_comparison.csv",  na = "")
-  save.image(file="selac_timings_201807260935.RData")
+  write.csv(tmp_bar_n,file="selac_revision_comparison_counts.csv",  na = "")
+  save.image(file="selac_timings_201807261051.RData")
 }
