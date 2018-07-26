@@ -373,22 +373,22 @@ backtrack_equivalent_version <- function(label_names){
   label_data[[2]][slot3] <- label_data[[2]][slot3] - 6
   
   tmp <-grepl("8f13a5a/R/selac.R",label_data[[1]]) 
-  slot1 <- label_data[[2]] <= 1122 & tmp
-  slot2 <- label_data[[2]] >= 1135 & tmp
+  slot1 <- label_data[[2]] <= 3443 & tmp
+  slot2 <- label_data[[2]] >= 3452 & tmp
   label_data[[1]][slot1 | slot2] <- sub("^GrahamDB-selac-8f13a5a","GrahamDB-selac-eb6213a",label_data[[1]][slot1 | slot2])
   label_data[[2]][slot2] <- label_data[[2]][slot2] + 2
   
   tmp <-grepl("eb6213a/R/selac.R",label_data[[1]]) 
-  slot1 <- label_data[[2]] <= 1122 & tmp
-  slot2 <- label_data[[2]] >= 1135 & tmp
+  slot1 <- label_data[[2]] <= 3233 & tmp
+  slot2 <- label_data[[2]] >= 3422 & tmp
   label_data[[1]][slot1 | slot2] <- sub("^GrahamDB-selac-eb6213a","GrahamDB-selac-38a4c36",label_data[[1]][slot1 | slot2])
   label_data[[2]][slot2] <- label_data[[2]][slot2] - 101
   
   tmp <-grepl("38a4c36/R/selac.R",label_data[[1]]) 
-  slot1 <- label_data[[2]] <= 1122 & tmp
-  slot2 <- label_data[[2]] >= 1255 & label_data[[2]] <= 3234 & tmp
-  slot3 <- label_data[[2]] >= 1255 & label_data[[2]] <= 3234 & tmp
-  slot4 <- label_data[[2]] >= 1135 & tmp
+  slot1 <- label_data[[2]] <= 1136 & tmp
+  slot2 <- label_data[[2]] >= 1139 & label_data[[2]] <= 3242 & tmp
+  slot3 <- label_data[[2]] >= 3244 & label_data[[2]] <= 3252 & tmp
+  slot4 <- label_data[[2]] >= 3254 & tmp
   slots=slot1|slot2|slot3|slot4
   label_data[[1]][slots] <- sub("^GrahamDB-selac-38a4c36","GrahamDB-selac-dd94866",label_data[[1]][slots])
   label_data[[2]][slot2|slot3|slot4] <- label_data[[2]][slot2|slot3|slot4] -1
@@ -521,15 +521,15 @@ if(F){
 
 if(F){
   system.time({comparison.lattice("ecoliSHORT_selac",c("GTR","UNREST"),
-                                  c("none","median",  "quadrature"),
+                                  c("none","median",  "quadrature","lognormal"),
                                   c("v1.6.1-rc1","744c6c8","dd94866","38a4c36",
                                     "8f13a5a","9e90977"),1,
-                                  c(5100:5129)) -> test_result_mat_full;})
+                                  c(5100:5105)) -> test_result_mat_full;})
   system.time({comparison.lattice("ecoliSHORT_selac",c("GTR","UNREST"),
-                                  c("none","median",  "quadrature"),
+                                  c("none","median",  "quadrature","lognormal"),
                                   c("v1.6.1-rc1","744c6c8","dd94866","38a4c36",
                                     "8f13a5a","9e90977"),1,
-                                  c(5100:5129)) -> test_result_mat_fullb;})
+                                  c(5100:5105)) -> test_result_mat_fullb;})
   print(all.equal(test_result_mat_full,test_result_mat_fullb))
   
   dim(test_result_mat_full)
@@ -549,4 +549,5 @@ if(F){
   tmp_foo<-aperm(test_result_means[totalTime300,,,],c(1,4,2,3))
   print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
                 ,,"ecoliSHORT_selac_GTR_none" ])
+  save.image(file="selac_timings_201807260935.RData")
 }
