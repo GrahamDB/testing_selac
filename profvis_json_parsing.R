@@ -546,11 +546,13 @@ if(F){
                             function(x) any(test_result_mat_full[x,3,,,,1]>600 ))))->totalTime600)
   length(names(which(sapply(rownames(test_result_mat_full),
                             function(x) any(test_result_mat_full[x,3,,,,1]>300 ))))->totalTime300)
-  tmp_foo<-aperm(test_result_means[totalTime300,,,],c(1,4,2,3))
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,"total.pct",,,,1]>20 ))))->totalPercent20)
+  tmp_foo<-aperm(test_result_means[totalPercent20,,,],c(1,4,2,3))
   print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
                 ,,"ecoliSHORT_selac_GTR_none" ])
-  tmp_bar <- aperm(test_result_means[totalTime300,,,],c(1,3,4,2))
-  tmp_bar_n <- aperm(test_result_counts[totalTime300,,],c(1,2,3))
+  tmp_bar <- aperm(test_result_means[totalPercent20,,,],c(1,3,4,2))
+  tmp_bar_n <- aperm(test_result_counts[totalPercent20,,],c(1,2,3))
   tmp_bar_n <- tmp_bar_n[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),, ]
   tmp_bar <- tmp_bar[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),,, ]
   tmp_bar_names <- dimnames(tmp_bar)
@@ -568,5 +570,8 @@ if(F){
   names(dimnames(tmp_bar))<- paste(names(tmp_bar_names)[c(1,3)],names(tmp_bar_names)[c(2,4)],sep=".")
   write.csv(tmp_bar,file="selac_revision_comparison.csv",  na = "")
   write.csv(tmp_bar_n,file="selac_revision_comparison_counts.csv",  na = "")
-  save.image(file="selac_timings_201807261051.RData")
+  tmp_bar_names2 <- expand.grid(tmp_bar_names[[3]],tmp_bar_names[[4]])
+  colnames(tmp_bar) <-paste(tmp_bar_names2[[2]],tmp_bar_names2[[1]],sep="." )
+  write.csv(cbind(tmp_bar,samples=tmp_bar_n),file="selac_revision_comparison_combo.csv",  na = "")
+  save.image(file="selac_timings_201807261551.RData")
 }
