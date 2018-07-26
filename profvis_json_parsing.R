@@ -459,29 +459,3 @@ if(F){
   tmp_foo<-aperm(test_result_mat_full[totalTime600,,1,,1,1],c(1,3,2))
   print(tmp_foo[order(apply(tmp_foo[,,"total.time"],1,max,na.rm=T),decreasing = T),, ])
 }
-
-if(F){
-  system.time({comparison.lattice("ecoliSHORT_selac","GTR",
-                                  c("none","median",  "quadrature"),
-                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
-                                  c(5100:5129)) -> test_result_mat_full;})
-  system.time({comparison.lattice("ecoliSHORT_selac","GTR",
-                                  c("none","median",  "quadrature"),
-                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
-                                  c(5100:5129)) -> test_result_mat_fullb;})
-  print(all.equal(test_result_mat_full,test_result_mat_fullb))
-  
-  
-  apply(test_result_mat_full,1:5,mean,na.rm=T)[,,,,1] -> test_result_means; 
-  apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,1,,,1] -> test_result_counts;
-  names(which(apply(test_result_counts>10,1,any)))-> atleast10
-  # dimnames(which(apply(test_result_counts>10,2:3,any)))-> reg.atleast10
-  print(test_result_mat_full[,1,1,,1,1])
-  length(names(which(sapply(rownames(test_result_mat_full),
-                            function(x) any(test_result_mat_full[x,3,,,,1]>600 ))))->totalTime600)
-  length(names(which(sapply(rownames(test_result_mat_full),
-                            function(x) any(test_result_mat_full[x,3,,,,1]>300 ))))->totalTime300)
-  tmp_foo<-aperm(test_result_means[totalTime600,,,],c(1,4,2,3))
-  print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
-                ,,"ecoliSHORT_selac_GTR_none" ])
-}
