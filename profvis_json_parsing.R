@@ -546,7 +546,7 @@ if(F){
                             function(x) any(test_result_mat_full[x,3,,,,1]>600 ))))->totalTime600)
   length(names(which(sapply(rownames(test_result_mat_full),
                             function(x) any(test_result_mat_full[x,3,,,,1]>300 ))))->totalTime300)
-  tmp_foo<-aperm(test_result_means[totalTime600,,,],c(1,4,2,3))
+  tmp_foo<-aperm(test_result_means[totalTime300,,,],c(1,4,2,3))
   print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
                 ,,"ecoliSHORT_selac_GTR_none" ])
 }
