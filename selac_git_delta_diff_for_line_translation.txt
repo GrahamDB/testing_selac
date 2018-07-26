@@ -1,0 +1,38 @@
+#deltas
+744c6c8..dd94866
+diff --git a/R/selac.R b/R/selac.R
+@@ -1120,21 +1120,18 @@ GetLikelihoodSAC_CodonForSingleCharGivenOptimum <- function(charnum=1, codon.dat
+<= 1122 : +0
+>= 1135 : +3
+
+dd94866..38a4c36
+diff --git a/R/selac.R b/R/selac.R
+@@ -1134,7 +1134,8 @@ GetLikelihoodSAC_CodonForSingleCharGivenOptimum <- function(charnum=1, codon.dat
+@@ -3239,7 +3240,7 @@ internal_expm <- function (x, order = 8,
+@@ -3249,7 +3250,7 @@ internal_expm <- function (x, order = 8,
+0001 , 1136 : +0
+1139 , 3242 : -1
+3244 , 3252 : -1
+3254 ,      : -1
+
+38a4c36..eb6213a
+diff --git a/R/selac.R b/R/selac.R
+@@ -3231,93 +3231,194 @@ GetMaxName <- function(x) {
+0001 , 3233 : +0
+3422 ,      : -101
+
+
+eb6213a..8f13a5a
+diff --git a/R/selac.R b/R/selac.R
+@@ -3441,16 +3441,14 @@ GetExpQt <- function(phy, Q, scale.factor, rates=NULL){
+0001 , 3443 : +0
+3452 ,      : +2
+
+
+8f13a5a..9e90977
+diff --git a/R/selac.R b/R/selac.R
+@@ -3356,6 +3356,10 @@ internal_expmt <- function (A, t_vec) {
+@@ -3379,11 +3383,13 @@ internal_expmt <- function (A, t_vec) {
+0001 , 3358 : +0
+3363 , 3385 : -4
+3393 ,      : -6

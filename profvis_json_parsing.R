@@ -362,11 +362,43 @@ backtrack_equivalent_version <- function(label_names){
   print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
+  
+  tmp <-grepl("9e90977/R/selac.R",label_data[[1]]) 
+  slot1 <- label_data[[2]] <= 3358 & tmp
+  slot2 <- label_data[[2]] >= 3363 & label_data[[2]] <= 3385 & tmp
+  slot3 <- label_data[[2]] >= 3393 & tmp
+  slots=slot1|slot2|slot3
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-9e90977","GrahamDB-selac-8f13a5a",label_data[[1]][slots])
+  label_data[[2]][slot2] <- label_data[[2]][slot2] - 4
+  label_data[[2]][slot3] <- label_data[[2]][slot3] - 6
+  
+  tmp <-grepl("8f13a5a/R/selac.R",label_data[[1]]) 
+  slot1 <- label_data[[2]] <= 1122 & tmp
+  slot2 <- label_data[[2]] >= 1135 & tmp
+  label_data[[1]][slot1 | slot2] <- sub("^GrahamDB-selac-8f13a5a","GrahamDB-selac-eb6213a",label_data[[1]][slot1 | slot2])
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 2
+  
+  tmp <-grepl("eb6213a/R/selac.R",label_data[[1]]) 
+  slot1 <- label_data[[2]] <= 1122 & tmp
+  slot2 <- label_data[[2]] >= 1135 & tmp
+  label_data[[1]][slot1 | slot2] <- sub("^GrahamDB-selac-eb6213a","GrahamDB-selac-38a4c36",label_data[[1]][slot1 | slot2])
+  label_data[[2]][slot2] <- label_data[[2]][slot2] - 101
+  
+  tmp <-grepl("38a4c36/R/selac.R",label_data[[1]]) 
+  slot1 <- label_data[[2]] <= 1122 & tmp
+  slot2 <- label_data[[2]] >= 1255 & label_data[[2]] <= 3234 & tmp
+  slot3 <- label_data[[2]] >= 1255 & label_data[[2]] <= 3234 & tmp
+  slot4 <- label_data[[2]] >= 1135 & tmp
+  slots=slot1|slot2|slot3|slot4
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-38a4c36","GrahamDB-selac-dd94866",label_data[[1]][slots])
+  label_data[[2]][slot2|slot3|slot4] <- label_data[[2]][slot2|slot3|slot4] -1
+  
   tmp <-grepl("dd94866/R/selac.R",label_data[[1]]) 
   slot1 <- label_data[[2]] <= 1122 & tmp
   slot2 <- label_data[[2]] >= 1135 & tmp
   label_data[[1]][slot1 | slot2] <- sub("^GrahamDB-selac-dd94866","GrahamDB-selac-744c6c8",label_data[[1]][slot1 | slot2])
   label_data[[2]][slot2] <- label_data[[2]][slot2] + 3
+  
   tmp <-grepl("744c6c8/R/selac.R",label_data[[1]]) 
   slot1 <- label_data[[2]] <= 1216 & tmp
   slot2 <- label_data[[2]] >= 1255 & label_data[[2]] <= 3234 & tmp
@@ -463,11 +495,11 @@ if(F){
 if(F){
   system.time({comparison.lattice("ecoliSHORT_selac","GTR",
                                   c("none","median",  "quadrature"),
-                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
+                                  c("v1.6.1-rc1","744c6c8","dd94866","d60d4c6","38a4c36"),1,
                                   c(5100:5129)) -> test_result_mat_full;})
   system.time({comparison.lattice("ecoliSHORT_selac","GTR",
                                   c("none","median",  "quadrature"),
-                                  c("v1.6.1-rc1","744c6c8","dd94866"),1,
+                                  c("v1.6.1-rc1","744c6c8","dd94866","d60d4c6","38a4c36"),1,
                                   c(5100:5129)) -> test_result_mat_fullb;})
   print(all.equal(test_result_mat_full,test_result_mat_fullb))
   
