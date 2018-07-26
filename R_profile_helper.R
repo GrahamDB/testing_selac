@@ -555,7 +555,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT"),
                                 output.restart.filename=output.file.name)
         # output.restart.filename=output.file.name, start.from.mle = TRUE,
         # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
-      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.05)
       save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
       # htmlwidgets::saveWidget(prof_obj, 
       #                         file=paste0(profile_prefix,".Rprofvis.html"))

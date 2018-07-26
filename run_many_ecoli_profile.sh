@@ -32,8 +32,8 @@ profile_run_seq () {
 }
 profile_run_combo () {
   seed_offset="$1"
-  rA="dd94866"
-  rB="d60d4c6"
+  rA="9e90977"
+  rB="8f13a5a"
   rC="38a4c36"
   profile_run_seq "$((seed_offset+0))" "$rA" "$rB" "$rC"
   profile_run_seq "$((seed_offset+3))" "$rB" "$rC" "$rA"
