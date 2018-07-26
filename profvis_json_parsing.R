@@ -349,7 +349,7 @@ comparison.lattice <-
 # ca13013/R/selac.R#[[3244-]] == 744c6c8/R/selac.R#[[3353-]]         :-109
 backtrack_equivalent_version <- function(label_names){
   res <- label_names
-  print(res)
+  # print(res)
   check.key<-which(grepl("#",label_names) & grepl("^GrahamDB",label_names) )
   if(length(check.key) == 0) return(res)
   if(length(check.key) == 1) {
@@ -359,7 +359,7 @@ backtrack_equivalent_version <- function(label_names){
   label_data <- as.data.frame(t(sapply(strsplit(label_names[check.key],"#"), as.character)),stringsAsFactors=F)
   label_data[[2]]<-as.integer(label_data[[2]])
   }
-  print(label_data)
+  # print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
   
@@ -409,7 +409,7 @@ backtrack_equivalent_version <- function(label_names){
         label_data[[1]][slot1|slot2|slot3|slot4])
   label_data[[2]][slot2] <- label_data[[2]][slot2] - 17
   label_data[[2]][slot3 | slot4] <- label_data[[2]][slot3 |slot4] - 109
-  print(label_data)
+  # print(label_data)
   res[check.key] <- paste(label_data[[1]],label_data[[2]],label_data[[3]],sep="#")
   res
 }
