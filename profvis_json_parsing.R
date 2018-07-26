@@ -517,3 +517,36 @@ if(F){
   print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
                 ,,"ecoliSHORT_selac_GTR_none" ])
 }
+
+
+if(F){
+  system.time({comparison.lattice("ecoliSHORT_selac",c("GTR","UNREST"),
+                                  c("none","median",  "quadrature"),
+                                  c("v1.6.1-rc1","744c6c8","dd94866","38a4c36",
+                                    "8f13a5a","9e90977"),1,
+                                  c(5100:5129)) -> test_result_mat_full;})
+  system.time({comparison.lattice("ecoliSHORT_selac",c("GTR","UNREST"),
+                                  c("none","median",  "quadrature"),
+                                  c("v1.6.1-rc1","744c6c8","dd94866","38a4c36",
+                                    "8f13a5a","9e90977"),1,
+                                  c(5100:5129)) -> test_result_mat_fullb;})
+  print(all.equal(test_result_mat_full,test_result_mat_fullb))
+  
+  dim(test_result_mat_full)
+  apply(test_result_mat_full,1:5,mean,na.rm=T)[,,,,1] -> test_result_means; 
+  apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,1,,,1] -> test_result_counts;
+  length(names(which(apply(test_result_counts>5,1,any)))-> atleast10)
+  dim(test_result_means)
+  dim(test_result_means[atleast10,,,])
+  # dimnames(which(apply(test_result_counts>10,2:3,any)))-> reg.atleast10
+  
+  print(head(test_result_mat_full[,1,1,,1,1],n=20))
+  print(head(test_result_means[,3,1,],n=20))
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,3,,,,1]>600 ))))->totalTime600)
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,3,,,,1]>300 ))))->totalTime300)
+  tmp_foo<-aperm(test_result_means[totalTime600,,,],c(1,4,2,3))
+  print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
+                ,,"ecoliSHORT_selac_GTR_none" ])
+}
