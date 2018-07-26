@@ -572,6 +572,7 @@ if(F){
   write.csv(tmp_bar_n,file="selac_revision_comparison_counts.csv",  na = "")
   tmp_bar_names2 <- expand.grid(tmp_bar_names[[3]],tmp_bar_names[[4]])
   colnames(tmp_bar) <-paste(tmp_bar_names2[[2]],tmp_bar_names2[[1]],sep="." )
-  write.csv(cbind(tmp_bar,samples=tmp_bar_n),file="selac_revision_comparison_combo.csv",  na = "")
+  colnames(tmp_bar_n) <-paste("samples",colnames(tmp_bar_n),sep="." )
+  write.csv(cbind(tmp_bar,tmp_bar_n),file="selac_revision_comparison_combo.csv",  na = "")
   save.image(file="selac_timings_201807261551.RData")
 }
