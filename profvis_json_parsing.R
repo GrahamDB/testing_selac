@@ -349,7 +349,7 @@ comparison.lattice <-
 # ca13013/R/selac.R#[[3244-]] == 744c6c8/R/selac.R#[[3353-]]         :-109
 backtrack_equivalent_version <- function(label_names){
   res <- label_names
-  print(res)
+  # print(res)
   check.key<-which(grepl("#",label_names) & grepl("^GrahamDB",label_names) )
   if(length(check.key) == 0) return(res)
   if(length(check.key) == 1) {
@@ -359,7 +359,7 @@ backtrack_equivalent_version <- function(label_names){
   label_data <- as.data.frame(t(sapply(strsplit(label_names[check.key],"#"), as.character)),stringsAsFactors=F)
   label_data[[2]]<-as.integer(label_data[[2]])
   }
-  print(label_data)
+  # print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
   
@@ -409,7 +409,7 @@ backtrack_equivalent_version <- function(label_names){
         label_data[[1]][slot1|slot2|slot3|slot4])
   label_data[[2]][slot2] <- label_data[[2]][slot2] - 17
   label_data[[2]][slot3 | slot4] <- label_data[[2]][slot3 |slot4] - 109
-  print(label_data)
+  # print(label_data)
   res[check.key] <- paste(label_data[[1]],label_data[[2]],label_data[[3]],sep="#")
   res
 }
@@ -546,11 +546,13 @@ if(F){
                             function(x) any(test_result_mat_full[x,3,,,,1]>600 ))))->totalTime600)
   length(names(which(sapply(rownames(test_result_mat_full),
                             function(x) any(test_result_mat_full[x,3,,,,1]>300 ))))->totalTime300)
-  tmp_foo<-aperm(test_result_means[totalTime300,,,],c(1,4,2,3))
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,"total.pct",,,,1]>20 ))))->totalPercent20)
+  tmp_foo<-aperm(test_result_means[totalPercent20,,,],c(1,4,2,3))
   print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliSHORT_selac_GTR_none"],1,max,na.rm=T),decreasing = T),
                 ,,"ecoliSHORT_selac_GTR_none" ])
-  tmp_bar <- aperm(test_result_means[totalTime300,,,],c(1,3,4,2))
-  tmp_bar_n <- aperm(test_result_counts[totalTime300,,],c(1,2,3))
+  tmp_bar <- aperm(test_result_means[totalPercent20,,,],c(1,3,4,2))
+  tmp_bar_n <- aperm(test_result_counts[totalPercent20,,],c(1,2,3))
   tmp_bar_n <- tmp_bar_n[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),, ]
   tmp_bar <- tmp_bar[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),,, ]
   tmp_bar_names <- dimnames(tmp_bar)
@@ -568,5 +570,9 @@ if(F){
   names(dimnames(tmp_bar))<- paste(names(tmp_bar_names)[c(1,3)],names(tmp_bar_names)[c(2,4)],sep=".")
   write.csv(tmp_bar,file="selac_revision_comparison.csv",  na = "")
   write.csv(tmp_bar_n,file="selac_revision_comparison_counts.csv",  na = "")
-  save.image(file="selac_timings_201807261051.RData")
+  tmp_bar_names2 <- expand.grid(tmp_bar_names[[3]],tmp_bar_names[[4]])
+  colnames(tmp_bar) <-paste(tmp_bar_names2[[2]],tmp_bar_names2[[1]],sep="." )
+  colnames(tmp_bar_n) <-paste("samples",colnames(tmp_bar_n),sep="." )
+  write.csv(cbind(tmp_bar,tmp_bar_n),file="selac_revision_comparison_combo.csv",  na = "")
+  save.image(file="selac_timings_201807261551.RData")
 }
