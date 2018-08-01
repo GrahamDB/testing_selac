@@ -15,3 +15,42 @@ NULL
 
 
 ( date; time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_full_selac_optimize(seed=1053, nCores =1, ref="744c6c8")'; date ;) |& tee -a log_profile_selacFULLb.txt
+
+
+wait_for_profile_finish () {
+  init_date="$(date)"
+  while [[ $( find ecoliSHORT_selac_*.Rprof -mmin -30 | wc -l) -gt 0 ]]
+  do date; sleep 1h; done; 
+  echo -e "INIT\t$init_date\nReady\t$(date)"; }
+
+
+run_fast_benchmark () { 
+  start_off=$((5100+${1:- 0}*6)); end_off=$((start_off+5)) ; iter_gamma=${2:-none}
+  for iter_nuc in GTR UNREST
+  do time ./run_many_ecoli_profile.sh SHORT $start_off $end_off $iter_gamma $iter_nuc
+  done ; }
+
+run_heavy_benchmark () { 
+  for iter_nuc in UNREST GTR
+  do for iter_gamma in none quadrature median lognormal 
+    do time ./run_many_ecoli_profile.sh SHORT 5100 5129 $iter_gamma $iter_nuc
+    done
+  done ; }
+
+
+run_light_benchmark () { 
+  for iter_nuc in UNREST GTR
+  do for iter_gamma in none quadrature median lognormal 
+    do time ./run_many_ecoli_profile.sh SHORT 5100 5105 $iter_gamma $iter_nuc
+    done
+  done ; }
+
+run_heavy_benchmark_mc () { 
+  mc_num_cores="${1:-2}"
+  for iter_nuc in GTR UNREST; do 
+    for iter_gamma in quadrature none median lognormal ;
+    do time ./run_many_ecoli_mc.sh SHORT 5100 5129 $mc_num_cores $iter_gamma $iter_nuc
+    done 
+  done ; }
+
+
