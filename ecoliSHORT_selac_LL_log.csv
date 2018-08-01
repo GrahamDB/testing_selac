@@ -1385,3 +1385,15 @@ SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
 "ecoliSHORT","UNREST","lognormal","744c6c8",1,5106,-10978.219
 "ecoliSHORT","UNREST","lognormal","dd94866",1,5106,-10978.219
 "ecoliSHORT","UNREST","lognormal","v1.6.1-rc1",1,5112,-10845.448
+"ecoliSHORT","UNREST","lognormal","744c6c8",1,5112,-10845.448
+"ecoliSHORT","UNREST","lognormal","dd94866",1,5112,-10845.448
+"ecoliSHORT","UNREST","lognormal","v1.6.1-rc1",1,5118,-10771.857
+"ecoliSHORT","UNREST","lognormal","744c6c8",1,5118,-10771.857
+"ecoliSHORT","UNREST","lognormal","dd94866",1,5118,-10771.857
+"ecoliSHORT","UNREST","lognormal","v1.6.1-rc1",1,5124,-10105.267
+"ecoliSHORT","UNREST","lognormal","744c6c8",1,5124,-10105.267
+"ecoliSHORT","UNREST","lognormal","dd94866",1,5124,-10105.267
+"ecoliSHORT","GTR","quadrature","9e90977",5,5100,-10521.858
+"ecoliSHORT","GTR","quadrature","9e90977",5,5103,-11288.386
+"ecoliSHORT","GTR","quadrature","9e90977",5,5104,-11357.855
+"ecoliSHORT","GTR","quadrature","9e90977",5,5101,NA
