@@ -19,7 +19,7 @@ NULL
 
 wait_for_profile_finish () {
   init_date="$(date)"
-  while [[ $( find ecoliSHORT_selac_*.Rprof -mmin -30 | wc -l) -gt 0 ]]
+  while [[ $( find ecoliSHORT*.Rprof -mmin -30 | wc -l) -gt 0 ]]
   do date; sleep 1h; done; 
   echo -e "INIT\t$init_date\nReady\t$(date)"; }
 
