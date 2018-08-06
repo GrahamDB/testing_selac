@@ -550,7 +550,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
                                 edge.length = 'optimize', data.type='codon',
                                 codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
                                 include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
-                                diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                                diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = TRUE,
                                 n.cores.by.gene  = 1, n.cores.by.gene.by.site=nCores,
                                 max.restarts = 1, max.evals=1, max.tol=1e-2, 
                                 fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,

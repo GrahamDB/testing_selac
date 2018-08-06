@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "$0" "$@"
-prof_mode=SHORTHMM
+prof_mode=SHORTTESTHMM
 sole_SEED=$1
 shift
 echo args "$@"
