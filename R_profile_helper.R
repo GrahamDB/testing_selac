@@ -539,6 +539,8 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
       #                         file=paste0(profile_prefix,".Rprofvis.html"))
     })
   }else if(mode=="SHORTTESTHMM"){
+    # HMM code requires starting edge length < 0.5 and > 1e-8
+    tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
     try({
       prof_obj <- profvis({
         ## start.from.mle set to allow manual specification of fasta files
@@ -583,6 +585,8 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
       #                         file=paste0(profile_prefix,".Rprofvis.html"))
     })
   } else  if(mode=="SHORTHMM"){
+    # HMM code requires starting edge length < 0.5 and > 1e-8
+    tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
     try({
       prof_obj <- profvis({
         ## start.from.mle set to allow manual specification of fasta files
