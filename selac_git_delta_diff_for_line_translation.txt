@@ -1,4 +1,22 @@
 #deltas
+e94b31e..000ff0d
+diff --git a/R/selac.R b/R/selac.R
+@@ -1082,31 +1082,24 @@ GetLikelihoodSAC_CodonForSingleCharGivenOptimumHMMScoring <- function(charnum=1,
+    ,1084 +0
+1103,     +7
+
+9e90977..e94b31e
+diff --git a/R/selac.R b/R/selac.R
+@@ -1144,7 +1144,7 @@ GetLikelihoodSAC_CodonForManyCharGivenFixedOptimumAndQAndRoot <- function(codon.
+@@ -1176,11 +1176,24 @@ GetLikelihoodSAC_CodonForManyCharVaryingBySiteEvolvingAA <- function(codon.data,
+@@ -1428,7 +1441,7 @@ GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA <- function(x, codon.d
+@@ -1438,7 +1451,7 @@ GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA <- function(x, codon.d
+    ,1146 +0
+1148,1178 +0
+1197,1443 -13
+1445,1453 -13
+1455,     -13
+
 744c6c8..dd94866
 diff --git a/R/selac.R b/R/selac.R
 @@ -1120,21 +1120,18 @@ GetLikelihoodSAC_CodonForSingleCharGivenOptimum <- function(charnum=1, codon.dat
