@@ -16,7 +16,60 @@ local({
 })
 print(selac_release)
 # setup_selac_for_profiling()
-
+test_selac_hmm <- function(phy, 
+                           fasta.file, 
+                           nuc.model=c("JC", "GTR", "HKY", "UNREST"),
+                           gamma.type=c("none", "median","quadrature","lognormal" ),
+                           nCores=1){
+  nuc.model=match.arg(nuc.model)
+  gamma.type=match.arg(gamma.type)
+  if(nuc.model == "HKY") stop("HKY model not implemented for GetLikelihoodSAC_CodonForManyCharGivenAllParams.")
+  include.gamma = (gamma.type != "none")
+  if(!include.gamma) gamma.type = "quadrature"
+  
+  tmp.gene <- read.dna(fasta.file, format="fasta")
+  tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
+  
+  chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+  codon.data <- chars[phy$tip.label,c(1,1+sample(ncol(chars)-1,10))]
+  codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
+  codon.data <- selac:::SitePattern(codon.data)
+  
+  
+  
+  codon.index.matrix = selac:::CreateCodonMutationMatrixIndexEvolveAA()
+  model.params = hmm.params
+  if(nuc.model != "UNREST")
+    model.params=c(model.params,std.base.freq)
+  model.params=c(model.params,std.nuc.params[[nuc.model]])
+  
+  lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA
+  if(include.gamma)
+    model.params=c(model.params,std.gamma.shape)
+  model.params = c(model.params,std.sel.reg)
+  
+  lSAC.c4mc.full(log(model.params), 
+                 codon.data=codon.data, 
+                 phy=phy,  
+                 codon.freq.by.aa=NULL, 
+                 codon.freq.by.gene=codon.freq.by.gene, 
+                 numcode=1, 
+                 diploid=TRUE, 
+                 aa.properties=NULL, 
+                 volume.fixed.value=std.gamma, 
+                 nuc.model=nuc.model, 
+                 codon.index.matrix=codon.index.matrix, 
+                 include.gamma=include.gamma, 
+                 gamma.type=gamma.type,
+                 ncats=4, 
+                 k.levels=0, 
+                 logspace=TRUE, 
+                 verbose=TRUE, 
+                 n.cores.by.gene.by.site=nCores,
+                 estimate.importance=FALSE) -> res
+  
+  return(res)
+}
 
 # basic loader to build further tests
 load_inputs <- function(){
@@ -437,7 +490,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
 
 
 
-run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTHMM","SHORTHMM"),
+run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTHMM","SHORTHMM","FASTHMMTEST","FASTHMM"),
                                    seed=sample.int(1e6,1),
                                    codon.model=c("selac","none","GY94","YN98"),
                                    nuc.model=c("GTR","UNREST","JC"),
@@ -554,7 +607,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
                                 n.cores.by.gene  = 1, n.cores.by.gene.by.site=nCores,
                                 max.restarts = 1, max.evals=1, max.tol=1e-2, 
                                 fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
-                                output.restart.filename=output.file.name)
+                                output.restart.filename=output.file.name, max.iterations=1)
         # output.restart.filename=output.file.name, start.from.mle = TRUE,
         # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
       }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
@@ -600,7 +653,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
                                 n.cores.by.gene  = 1, n.cores.by.gene.by.site=nCores,
                                 max.restarts = 1, max.evals=1, max.tol=1e-2,
                                 fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
-                                output.restart.filename=output.file.name)
+                                output.restart.filename=output.file.name, max.iterations=1)
         # output.restart.filename=output.file.name, start.from.mle = TRUE,
         # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
       }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
@@ -608,6 +661,114 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
       # htmlwidgets::saveWidget(prof_obj, 
       #                         file=paste0(profile_prefix,".Rprofvis.html"))
     })
+  } else if(mode=="FASTHMMTEST") {
+    
+      # nuc.model=match.arg(nuc.model)
+      # gamma.type=match.arg(gamma.type)
+      # if(nuc.model == "HKY") stop("HKY model not implemented for GetLikelihoodSAC_CodonForManyCharGivenAllParams.")
+      # include.gamma = (gamma.type != "none")
+      # if(!include.gamma) gamma.type = "quadrature"
+      # 
+      tmp.gene <- read.dna(fasta.file, format="fasta")
+      tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
+      
+      chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+      codon.data <- chars[tree$tip.label,c(1,1+sample(ncol(chars)-1,10))]
+      codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
+      codon.data <- selac:::SitePattern(codon.data)
+      
+      
+      
+      codon.index.matrix = selac:::CreateCodonMutationMatrixIndexEvolveAA()
+      model.params = hmm.params
+      if(nuc.model != "UNREST")
+        model.params=c(model.params,std.base.freq)
+      model.params=c(model.params,std.nuc.params[[nuc.model]])
+      
+      lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA
+      if(include.gamma)
+        model.params=c(model.params,std.gamma.shape)
+      model.params = c(model.params,std.sel.reg)
+      tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
+      try({
+        prof_obj <- profvis({
+      lSAC.c4mc.full(log(model.params), 
+                     codon.data=codon.data, 
+                     phy=phy,  
+                     codon.freq.by.aa=NULL, 
+                     codon.freq.by.gene=codon.freq.by.gene, 
+                     numcode=1, 
+                     diploid=TRUE, 
+                     aa.properties=NULL, 
+                     volume.fixed.value=std.gamma, 
+                     nuc.model=nuc.model, 
+                     codon.index.matrix=codon.index.matrix, 
+                     include.gamma=include.gamma, 
+                     gamma.type=gamma.type,
+                     ncats=4, 
+                     k.levels=0, 
+                     logspace=TRUE, 
+                     verbose=TRUE, 
+                     n.cores.by.gene.by.site=nCores,
+                     estimate.importance=FALSE) -> result$loglik
+        }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+        save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+        # htmlwidgets::saveWidget(prof_obj, 
+        #                         file=paste0(profile_prefix,".Rprofvis.html"))
+      })
+      
+    
+  } else if(mode=="FASTHMM") {
+    
+    tmp.gene <- read.dna(fasta.file, format="fasta")
+    tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
+    
+    chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+    codon.data <- chars[tree$tip.label,c(1,1+sample(ncol(chars)-1,10))]
+    codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
+    codon.data <- selac:::SitePattern(codon.data)
+    
+    
+    
+    codon.index.matrix = selac:::CreateCodonMutationMatrixIndexEvolveAA()
+    model.params = hmm.params
+    if(nuc.model != "UNREST")
+      model.params=c(model.params,std.base.freq)
+    model.params=c(model.params,std.nuc.params[[nuc.model]])
+    
+    lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA
+    if(include.gamma)
+      model.params=c(model.params,std.gamma.shape)
+    model.params = c(model.params,std.sel.reg)
+    tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
+    try({
+      prof_obj <- profvis({
+        lSAC.c4mc.full(log(model.params), 
+                       codon.data=codon.data, 
+                       phy=phy,  
+                       codon.freq.by.aa=NULL, 
+                       codon.freq.by.gene=codon.freq.by.gene, 
+                       numcode=1, 
+                       diploid=TRUE, 
+                       aa.properties=NULL, 
+                       volume.fixed.value=std.gamma, 
+                       nuc.model=nuc.model, 
+                       codon.index.matrix=codon.index.matrix, 
+                       include.gamma=include.gamma, 
+                       gamma.type=gamma.type,
+                       ncats=4, 
+                       k.levels=0, 
+                       logspace=TRUE, 
+                       verbose=FALSE, 
+                       n.cores.by.gene.by.site=nCores,
+                       estimate.importance=FALSE) -> result$loglik
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.05)
+      save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+      # htmlwidgets::saveWidget(prof_obj, 
+      #                         file=paste0(profile_prefix,".Rprofvis.html"))
+    })
+    
+    
   } else {
     cat(sprintf("Request for %s mode not understood.\n",as.character(mode)))
   }
