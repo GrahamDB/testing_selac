@@ -2117,3 +2117,7 @@ SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
 "ecoliSHORT","UNREST","lognormal","9e90977",2,5125,-11048.215
 "ecoliSHORT","UNREST","lognormal","9e90977",2,5129,-10495.344
 "ecoliSHORT","UNREST","lognormal","9e90977",2,5126,-11168.207
+"ecoliSHORT","UNREST","none","e94b31e",1,2053,-12447.334
+"ecoliSHORT","UNREST","none","5c98a1f",1,2053,-12447.334
+"ecoliSHORT","UNREST","none","9cc4412",1,2053,-12447.334
+"ecoliSHORT","UNREST","none","000ff0d",1,2053,-12447.334

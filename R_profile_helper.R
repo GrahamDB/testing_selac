@@ -494,7 +494,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
 
 
 
-run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTHMM","SHORTHMM","FASTHMMTEST","FASTHMM"),
+run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTHMM","SHORTHMM","FASTHMMTEST","HMMEVAL50","HMMEVALFULL"),
                                    seed=sample.int(1e6,1),
                                    codon.model=c("selac","none","GY94","YN98"),
                                    nuc.model=c("GTR","UNREST","JC"),
@@ -722,13 +722,13 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
       })
       
     
-  } else if(mode=="FASTHMM") {
+  } else if(mode=="HMMEVAL50") {
     
     tmp.gene <- read.dna(fasta.file, format="fasta")
     tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
     
     chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
-    codon.data <- chars[tree$tip.label,c(1,1+sample(ncol(chars)-1,10))]
+    codon.data <- chars[tree$tip.label,c(1,1+sample(ncol(chars)-1,50))]
     codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
     codon.data <- selac:::SitePattern(codon.data)
     
@@ -744,7 +744,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
     if(include.gamma)
       model.params=c(model.params,std.gamma.shape)
     model.params = c(model.params,std.sel.reg)
-    tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
+    # tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
     try({
       prof_obj <- profvis({
         lSAC.c4mc.full(log(model.params), 
@@ -763,7 +763,58 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
                        ncats=4, 
                        k.levels=0, 
                        logspace=TRUE, 
-                       verbose=FALSE, 
+                       verbose=TRUE, 
+                       n.cores.by.gene.by.site=nCores,
+                       estimate.importance=FALSE) -> result$loglik
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.05)
+      save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+      # htmlwidgets::saveWidget(prof_obj, 
+      #                         file=paste0(profile_prefix,".Rprofvis.html"))
+    })
+    
+    
+  } else if(mode=="HMMEVALFULL") {
+    
+    tmp.gene <- read.dna(fasta.file, format="fasta")
+    tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
+    
+    chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+    codon.data <- chars[tree$tip.label,]
+    codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
+    codon.data <- selac:::SitePattern(codon.data)
+    
+    
+    
+    codon.index.matrix = selac:::CreateCodonMutationMatrixIndexEvolveAA()
+    model.params = hmm.params
+    if(nuc.model != "UNREST")
+      model.params=c(model.params,std.base.freq)
+    model.params=c(model.params,std.nuc.params[[nuc.model]])
+    
+    lSAC.c4mc.full <- selac:::GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA
+    if(include.gamma)
+      model.params=c(model.params,std.gamma.shape)
+    model.params = c(model.params,std.sel.reg)
+    # tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
+    try({
+      prof_obj <- profvis({
+        lSAC.c4mc.full(log(model.params), 
+                       codon.data=codon.data, 
+                       phy=tree,  
+                       codon.freq.by.aa=NULL, 
+                       codon.freq.by.gene=codon.freq.by.gene, 
+                       numcode=1, 
+                       diploid=TRUE, 
+                       aa.properties=NULL, 
+                       volume.fixed.value=std.gamma, 
+                       nuc.model=nuc.model, 
+                       codon.index.matrix=codon.index.matrix, 
+                       include.gamma=include.gamma, 
+                       gamma.type=gamma.type,
+                       ncats=4, 
+                       k.levels=0, 
+                       logspace=TRUE, 
+                       verbose=TRUE, 
                        n.cores.by.gene.by.site=nCores,
                        estimate.importance=FALSE) -> result$loglik
       }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.05)
