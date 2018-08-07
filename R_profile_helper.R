@@ -172,6 +172,10 @@ std.gamma=0.0003990333
 std.base.freq = c(A=0.25,C=0.25,G=0.25)
 std.poly.params = c(NA,NA)
 std.gamma.shape = 5
+hmm.params = c(C.Phi.q.Ne = 2,
+               alpha=1.829272, 
+               beta=0.101799)
+std.sel.reg = 0.01
 ## Notes on nuc.mutation.params:
 # used as rates value in CreateNucleotideMutationMatrix(rates, model, base.freqs)->res
 # either: length(base.freqs) == 4 && sum(base.freqs) == 1
@@ -694,7 +698,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
         prof_obj <- profvis({
       lSAC.c4mc.full(log(model.params), 
                      codon.data=codon.data, 
-                     phy=phy,  
+                     phy=tree,  
                      codon.freq.by.aa=NULL, 
                      codon.freq.by.gene=codon.freq.by.gene, 
                      numcode=1, 
@@ -745,7 +749,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
       prof_obj <- profvis({
         lSAC.c4mc.full(log(model.params), 
                        codon.data=codon.data, 
-                       phy=phy,  
+                       phy=tree,  
                        codon.freq.by.aa=NULL, 
                        codon.freq.by.gene=codon.freq.by.gene, 
                        numcode=1, 
