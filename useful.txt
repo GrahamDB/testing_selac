@@ -1,25 +1,25 @@
-Type 'demo()' for some demos, 'help()' for on-line help, or
-'help.start()' for an HTML browser interface to help.
-Type 'q()' to quit R.
+#Type 'demo()' for some demos, 'help()' for on-line help, or
+#'help.start()' for an HTML browser interface to help.
+#Type 'q()' to quit R.
 
-> source("R_profile_helper.R", keep.source = T)
-[1] "/home/asterion/R/x86_64-pc-linux-gnu-library/3.4"
-[2] "/usr/local/lib/R/site-library"                   
-[3] "/usr/lib/R/site-library"                         
-[4] "/usr/lib/R/library"                              
-Loading required package: profvis
-NULL
-> run_full_selac_optimize(seed=1053, nCores =1)
-[1] "v1.6.1-rc1"
+#> source("R_profile_helper.R", keep.source = T)
+#[1] "/home/asterion/R/x86_64-pc-linux-gnu-library/3.4"
+#[2] "/usr/local/lib/R/site-library"                   
+#[3] "/usr/lib/R/site-library"                         
+#[4] "/usr/lib/R/library"                              
+#Loading required package: profvis
+#NULL
+#> run_full_selac_optimize(seed=1053, nCores =1)
+#[1] "v1.6.1-rc1"
 
 
 
-( date; time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_full_selac_optimize(seed=1053, nCores =1, ref="744c6c8")'; date ;) |& tee -a log_profile_selacFULLb.txt
+#( date; time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_full_selac_optimize(seed=1053, nCores =1, ref="744c6c8")'; date ;) |& tee -a log_profile_selacFULLb.txt
 
 
 wait_for_profile_finish () {
   init_date="$(date)"
-  while [[ $( find ecoliSHORT*.Rprof -mmin -30 | wc -l) -gt 0 ]]
+  while [[ $( find *.Rprof log_profile_*.txt -mmin -30 | wc -l) -gt 0 ]]
   do date; sleep 1h; done; 
   echo -e "INIT\t$init_date\nReady\t$(date)"; }
 
@@ -54,3 +54,27 @@ run_heavy_benchmark_mc () {
   done ; }
 
 
+hmm_benchmark_battery () {
+#( start_date="$(date)"; 
+  cur_revision="${1:-5c98a1f}"
+  ./check_ecoli_profile_short.sh 2053 "$cur_revision"
+  ./check_ecoli_profile_mcXmode.sh HMMEVALFULL 2053  10 "$cur_revision"
+  ./check_ecoli_profile_mcXmode.sh HMMEVAL50 2054 1 "$cur_revision" 
+  ./check_ecoli_profile_mcXmode.sh HMMEVALFULL 2053 1 "$cur_revision"
+  for iter_gamma in none median quadrature lognormal
+  do ./run_many_ecoli_mc.sh FASTHMMTEST 3010 3039 1 $iter_gamma UNREST "$cur_revision" ; done
+  for iter_gamma in none median quadrature lognormal 
+  do ./run_many_ecoli_mc.sh HMMEVAL50 3010 3039 1 $iter_gamma UNREST "$cur_revision" ; done
+#echo -e "Start\t$start_date\nEnd\t$(date)" ;);
+}
+
+
+
+wait_and_run () {
+  wait_for_profile_finish
+  start_date="$(date)"; 
+  echo "RUNNING:" "$@"
+  sleep 10
+  "$@"
+  echo -e "Init:\t$init_date\nStart\t$start_date\nEnd\t$(date)"
+}

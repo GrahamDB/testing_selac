@@ -673,10 +673,15 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
       # include.gamma = (gamma.type != "none")
       # if(!include.gamma) gamma.type = "quadrature"
       # 
+    if(!file.exists("ecoli_chars.RData")){
       tmp.gene <- read.dna(fasta.file, format="fasta")
       tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
       
       chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+      save(chars,file="ecoli_chars.RData")
+    } else {
+      load(file="ecoli_chars.RData")
+    }
       codon.data <- chars[tree$tip.label,c(1,1+sample(ncol(chars)-1,10))]
       codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
       codon.data <- selac:::SitePattern(codon.data)
@@ -724,10 +729,15 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
     
   } else if(mode=="HMMEVAL50") {
     
-    tmp.gene <- read.dna(fasta.file, format="fasta")
-    tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
-    
-    chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+    if(!file.exists("ecoli_chars.RData")){
+      tmp.gene <- read.dna(fasta.file, format="fasta")
+      tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
+      
+      chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+      save(chars,file="ecoli_chars.RData")
+    } else {
+      load(file="ecoli_chars.RData")
+    }
     codon.data <- chars[tree$tip.label,c(1,1+sample(ncol(chars)-1,50))]
     codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
     codon.data <- selac:::SitePattern(codon.data)
@@ -775,10 +785,15 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
     
   } else if(mode=="HMMEVALFULL") {
     
-    tmp.gene <- read.dna(fasta.file, format="fasta")
-    tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
-    
-    chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+    if(!file.exists("ecoli_chars.RData")){
+      tmp.gene <- read.dna(fasta.file, format="fasta")
+      tmp.gene <- as.list(as.matrix(cbind(tmp.gene)))
+      
+      chars <- selac:::DNAbinToCodonNumeric(tmp.gene)
+      save(chars,file="ecoli_chars.RData")
+    } else {
+      load(file="ecoli_chars.RData")
+    }
     codon.data <- chars[tree$tip.label,]
     codon.freq.by.gene <- selac:::GetCodonFreqsByGene(codon.data[,-1])
     codon.data <- selac:::SitePattern(codon.data)
@@ -817,7 +832,7 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT","SHORTTESTH
                        verbose=TRUE, 
                        n.cores.by.gene.by.site=nCores,
                        estimate.importance=FALSE) -> result$loglik
-      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.05)
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
       save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
       # htmlwidgets::saveWidget(prof_obj, 
       #                         file=paste0(profile_prefix,".Rprofvis.html"))
