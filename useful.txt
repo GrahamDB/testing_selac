@@ -16,6 +16,73 @@
 
 #( date; time R -q --no-save -e 'source("R_profile_helper.R", keep.source = T); run_full_selac_optimize(seed=1053, nCores =1, ref="744c6c8")'; date ;) |& tee -a log_profile_selacFULLb.txt
 
+get_deltas () { rev_count=$1 ;
+  ( cd ~/git/selac; 
+    next_rev=$( git log -n 1 --pretty=oneline  | cut -c 1-7); 
+    for  prev_rev in $( git log -n ${rev_count} --pretty=oneline | tail -n +2 | cut -c 1-7) ; 
+    do echo $prev_rev..$next_rev; 
+       git diff -r ${prev_rev} -r ${next_rev}  | grep '^@@\|^diff' ; 
+       echo ; 
+       next_rev=$prev_rev; 
+    done; ) ; }
+
+
+proc_block () { 
+  last_offset=0; last_lines_delta=0; 
+  read rev_pair; 
+  prev_rev=${rev_pair:0:7}; next_rev=${rev_pair:9:7}; 
+  read a b c target extra; 
+  file_pat=${target/b/$next_rev}; 
+  echo $next_rev to $prev_rev, file $file_pat; 
+  while read a prev_diff next_diff b extra; 
+  do prev_lines=${prev_diff/#*,}; 
+     next_lines=${next_diff/#*,}; 
+     next_offset=${next_diff/%,*}; 
+     next_offset=${next_offset/#+}; 
+     echo 'slot2 <- label_data[[2]] >= '$last_offset' & label_data[[2]] <= '$((next_offset+2))' & tmp'; 
+     echo 'label_data[[2]][slot2] <- label_data[[2]][slot2] + '$last_lines_delta; 
+     ((last_lines_delta+=prev_lines-next_lines)); ((last_offset=next_offset+next_lines-3)); 
+  done;  
+  echo 'slot2 <- label_data[[2]] >= '$last_offset' & tmp'; 
+  echo 'label_data[[2]][slot2] <- label_data[[2]][slot2] + '$last_lines_delta; 
+}
+
+proc_block_alt () {
+  last_offset=0; last_lines_delta=0;
+  read a b c target extra;
+  file_pat=${target/b/$next_rev};
+  echo '#a' $next_rev to $prev_rev, file $file_pat;
+  echo 'atmp <-grepl("'$file_pat'",label_data[[1]])'
+  J=1
+  while read a prev_diff next_diff b extra;
+  do prev_lines=${prev_diff/#*,};
+     next_lines=${next_diff/#*,};
+     next_offset=${next_diff/%,*};
+     next_offset=${next_offset/#+};
+     slotN="islot$((J++))"
+     echo $slotN' <- label_data[[2]] >= '$last_offset' & label_data[[2]] <= '$((next_offset+2))' & tmp';
+     echo 'label_data[[2]]['$slotN'] <- label_data[[2]]['$slotN'] + '$last_lines_delta;
+     ((last_lines_delta+=prev_lines-next_lines)); ((last_offset=next_offset+next_lines-3));
+  done;
+  echo -n 'islots <- '
+  seq -f 'slot%.0f' $J | paste -s -d '|' -
+  echo 'label_data[[1]][slots] <- sub("^GrahamDB-selac-'$next_rev'","GrahamDB-selac-'$prev_rev'",label_data[[1]][slots])'
+  slotN="islot$((J++))"
+  echo $slotN' <- label_data[[2]] >= '$last_offset' & tmp';
+  echo 'label_data[[2]]['$slotN'] <- label_data[[2]]['$slotN'] + '$last_lines_delta;
+}
+
+
+proc_deltas () { rev_count=${1:-5} ;
+  ( cd ~/git/selac;
+    next_rev=$( git log -n 1 --pretty=oneline  | cut -c 1-7);
+    for  prev_rev in $( git log -n $rev_count --pretty=oneline | tail -n +2 | cut -c 1-7) ; 
+    do echo '#'$prev_rev..$next_rev;
+       git diff -r ${prev_rev} -r ${next_rev}  | grep '^@@\|^diff' | proc_block_alt | sort | sed -e 's/islot/slot/g; s/^atmp/tmp/'; 
+       echo ;
+       next_rev=$prev_rev;
+    done; ) ; }
+
 
 wait_for_profile_finish () {
   init_date="$(date)"

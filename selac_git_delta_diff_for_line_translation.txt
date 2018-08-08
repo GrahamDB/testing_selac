@@ -1,4 +1,28 @@
 #deltas
+ade1e58..2a6c393
+diff --git a/R/selac.R b/R/selac.R
+@@ -1075,7 +1075,7 @@ GetLikelihoodSAC_AAForSingleCharGivenOptimum <- function(aa.data, phy, Q_aa, cha
+@@ -1100,9 +1100,47 @@ GetLikelihoodSAC_CodonForSingleCharGivenOptimumHMMScoring <- function(charnum=1,
+@@ -1166,13 +1204,13 @@ GetLikelihoodSAC_CodonForManyCharVaryingBySiteEvolvingAA <- function(codon.data,
+
+5c98a1f..ade1e58
+diff --git a/R/selac.R b/R/selac.R
+@@ -1185,7 +1185,7 @@ GetLikelihoodSAC_CodonForManyCharVaryingBySiteEvolvingAA <- function(codon.data,
+
+9cc4412..5c98a1f
+diff --git a/R/selac.R b/R/selac.R
+@@ -1451,10 +1451,15 @@ GetLikelihoodSAC_CodonForManyCharGivenAllParamsEvolvingAA <- function(x, codon.d
+@@ -1576,10 +1581,15 @@ GetLikelihoodSAC_CodonForManyCharGivenAllParams <- function(x, codon.data, phy,
+@@ -1650,10 +1660,15 @@ GetLikelihoodMutSel_CodonForManyCharGivenAllParams <- function(x, codon.data, ph
+@@ -1685,10 +1700,15 @@ GetLikelihoodGY94_YN98_CodonForManyCharGivenAllParams <- function(x, codon.data,
+@@ -1741,10 +1761,15 @@ GetLikelihoodNucleotideForManyCharGivenAllParams <- function(x, nuc.data, phy, r
+
+000ff0d..9cc4412
+diff --git a/R/selac.R b/R/selac.R
+@@ -5120,7 +5120,7 @@ SelacOptimize <- function(codon.data.path, n.partitions=NULL, phy, data.type="co
+@@ -5539,7 +5539,7 @@ SelacHMMOptimize <- function(codon.data.path, n.partitions=NULL, phy, data.type=
+
+
 e94b31e..000ff0d
 diff --git a/R/selac.R b/R/selac.R
 @@ -1082,31 +1082,24 @@ GetLikelihoodSAC_CodonForSingleCharGivenOptimumHMMScoring <- function(charnum=1,
