@@ -362,6 +362,27 @@ backtrack_equivalent_version <- function(label_names){
   # print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
+  
+  #5eec8b6..86cc7e9
+  #a 86cc7e9 to 5eec8b6, file 86cc7e9/R/selac.R
+  tmp <-grepl("86cc7e9/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 1119 & tmp
+  slot2 <- label_data[[2]] >= 1124 & tmp
+  slots <- slot1|slot2
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-86cc7e9","GrahamDB-selac-5eec8b6",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 0
+  
+  #2a6c393..5eec8b6
+  #a 5eec8b6 to 2a6c393, file 5eec8b6/R/selac.R
+  tmp <-grepl("5eec8b6/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 1118 & tmp
+  slot2 <- label_data[[2]] >= 1120 & tmp
+  slots <- slot1|slot2
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-5eec8b6","GrahamDB-selac-2a6c393",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 0
+  
   #ade1e58..2a6c393
   #a 2a6c393 to ade1e58, file 2a6c393/R/selac.R
   tmp <-grepl("2a6c393/R/selac.R",label_data[[1]])
