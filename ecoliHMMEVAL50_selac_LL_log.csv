@@ -42,3 +42,6 @@ SRC,Nuc.Model,Gamma.model,Revision,nCores,seed,model.LL
 "ecoliHMMEVAL50","UNREST","median","5c98a1f",1,3017,-448.199
 "ecoliHMMEVAL50","UNREST","median","5c98a1f",1,3021,NA
 "ecoliHMMEVAL50","UNREST","median","5c98a1f",1,3022,NA
+"ecoliHMMEVAL50","GTR","none","ade1e58",1,2054,-420.155
+"ecoliHMMEVAL50","UNREST","none","ade1e58",1,3010,-499.398
+"ecoliHMMEVAL50","UNREST","none","ade1e58",1,3013,-495.010
