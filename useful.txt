@@ -124,11 +124,12 @@ run_heavy_benchmark_mc () {
 hmm_benchmark_battery () {
 #( start_date="$(date)"; 
   cur_revision="${1:-5c98a1f}"
+  cur_seed_offset="${2:-3010}"
   ./check_ecoli_profile_short.sh 2053 "$cur_revision"
   ./check_ecoli_profile_mcXmode.sh HMMEVALFULL 2053  10 "$cur_revision"
   ./check_ecoli_profile_mcXmode.sh HMMEVAL50 2054 1 "$cur_revision" 
   for iter_gamma in none median quadrature lognormal
-  do ./run_many_ecoli_mc.sh FASTHMMTEST 3010 3015 1 $iter_gamma UNREST "$cur_revision" ; done
+  do ./run_many_ecoli_mc.sh FASTHMMTEST $cur_seed_offset $((cur_seed_offset+5)) 1 $iter_gamma UNREST "$cur_revision" ; done
 #echo -e "Start\t$start_date\nEnd\t$(date)" ;);
 }
 
@@ -138,7 +139,7 @@ hmm_longbenchmark_battery () {
   ./check_ecoli_profile_short.sh 2054 "$cur_revision"
   ./check_ecoli_profile_mcXmode.sh HMMEVALFULL 2053 1 "$cur_revision"
   for iter_gamma in none median quadrature lognormal
-  do ./run_many_ecoli_mc.sh HMMEVAL50 3010 3015 1 $iter_gamma UNREST "$cur_revision" ; done
+  do ./run_many_ecoli_mc.sh HMMEVAL50 $((cur_seed_offset+5)) 1 $iter_gamma UNREST "$cur_revision" ; done
 #echo -e "Start\t$start_date\nEnd\t$(date)" ;);
 }
 
