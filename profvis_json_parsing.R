@@ -254,7 +254,9 @@ comparison.lattice.layer <-
                            src.key, nuc.model, gamma.type,
                            selac_release, nCores, seed)
     
-    if(!file.exists(paste0(profile_prefix,".Rprof"))){
+    if(!file.exists(paste0(profile_prefix,".Rprof")) ||
+       grepl(pattern = "^ecoli", x=src.key) 
+       && !file.exists(paste0("ecoli_output/",profile_prefix,"_result.Rdata"))){
       res <- numeric(0)
       dim(res) <- c(0,5,1,1,1,1)
       dimnames(res) <- list(label=character(0),
@@ -266,13 +268,43 @@ comparison.lattice.layer <-
                                             seed=paste0("S",seed))
       return(res)
     }
+    if(file.exists(paste0("ecoli_output/",profile_prefix,"_result.Rdata"))){
+      load(paste0("ecoli_output/",profile_prefix,"_result.Rdata"))
+      if(is.null(result) || !is.finite(result$loglik)){
+        res <- numeric(0)
+        dim(res) <- c(0,5,1,1,1,1)
+        dimnames(res) <- list(label=character(0),
+                              measure=c("self.time", "self.pct",
+                                        "total.time", "total.pct", 
+                                        "mem.total"),
+                              src=paste(src.key,nuc.model,gamma.type,sep="_"),
+                              ver=selac_release, mc=paste0("p",nCores),
+                              seed=paste0("S",seed))
+        return(res)
+      }
+    }
     if(file.exists(paste0(profile_prefix,"_Rprofsummary.RData")) &&
        (file.mtime(paste0(profile_prefix,"_Rprofsummary.RData")) > file.mtime(paste0(profile_prefix,".Rprof")) )  ){
       load(file=paste0(profile_prefix,"_Rprofsummary.RData"))
     } else {
+      rprof_summary <- NULL
+      try({
       rprof_summary <- custum_summaryRprof(paste0(profile_prefix,".Rprof"),
                                            lines="hide", basenames = 3, memory = "both")[["by.self"]]
       save(rprof_summary, file=paste0(profile_prefix,"_Rprofsummary.RData"))
+      })
+      if(is.null(rprof_summary)){
+        res <- numeric(0)
+        dim(res) <- c(0,5,1,1,1,1)
+        dimnames(res) <- list(label=character(0),
+                              measure=c("self.time", "self.pct",
+                                        "total.time", "total.pct", 
+                                        "mem.total"),
+                              src=paste(src.key,nuc.model,gamma.type,sep="_"),
+                              ver=selac_release, mc=paste0("p",nCores),
+                              seed=paste0("S",seed))
+        return(res)
+      }
     }
     if(!is.null(min.self.time))
       rprof_summary <- rprof_summary[rprof_summary$self.time>=min.self.time,]
@@ -689,4 +721,81 @@ if(F){
   colnames(tmp_bar_n) <-paste("samples",colnames(tmp_bar_n),sep="." )
   write.csv(cbind(tmp_bar,tmp_bar_n),file="selac_revision_comparison_combo.csv",  na = "")
   save.image(file="selac_timings_201807261551.RData")
+}
+
+
+
+if(F){
+  revision.key=c("ca4a198","f1c3d1e","86cc7e9", "ade1e58", "5c98a1f", "9cc4412", "000ff0d")
+  system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
+                                  c("GTR","UNREST"),
+                                  c("none","median",  "quadrature","lognormal"),
+                                  revision.key,1,
+                                  c(3010:3039)) -> test_result_mat_full;})
+  system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
+                                  c("GTR","UNREST"),
+                                  c("none","median",  "quadrature","lognormal"),
+                                  revision.key,1,
+                                  c(3010:3039)) -> test_result_mat_fullb;})
+  print(all.equal(test_result_mat_full,test_result_mat_fullb))
+  dimnames(test_result_mat_full)[[4]]<-paste0("r",dimnames(test_result_mat_full)[[4]])
+  dim(test_result_mat_full)
+  apply(test_result_mat_full,1:5,mean,na.rm=T)[,,,,1] -> test_result_means; 
+  apply(test_result_mat_full,1:5,function(x) sum(is.finite(x)) )[,1,,,1] -> test_result_counts;
+  length(names(which(apply(test_result_counts>5,1,any)))-> atleast10)
+  dim(test_result_means)
+  dim(test_result_means[atleast10,,,])
+  # dimnames(which(apply(test_result_counts>10,2:3,any)))-> reg.atleast10
+  hmm_fast <- paste0("ecoliFASTHMMTEST_selac_UNREST_",c("none","median",  "quadrature","lognormal"))
+  hmm_std <- paste0("ecoliHMMEVAL50_selac_UNREST_",c("none","median",  "quadrature","lognormal"))
+  keep_versions <- paste0("r",c("f1c3d1e","86cc7e9", "ade1e58", "5c98a1f"))
+  length(names(which(apply(test_result_counts[,hmm_fast,]>0,1,any)))-> hmm_fast_lines)
+  length(names(which(apply(test_result_counts[,hmm_std ,]>0,1,any)))-> hmm_std_lines)
+  
+  print(head(test_result_mat_full[hmm_fast_lines,1,hmm_fast[1],keep_versions,1,1],n=20))
+  print(head(test_result_mat_full[hmm_std_lines ,1,hmm_std[1], keep_versions,1,1],n=20))
+  print(head(test_result_means[hmm_fast_lines,3,hmm_fast[1],keep_versions],n=20))
+  print(head(test_result_means[hmm_std_lines, 3,hmm_std[1], keep_versions],n=20))
+  print(head(test_result_means[hmm_fast_lines,4,hmm_fast[1],keep_versions],n=20))
+  print(head(test_result_means[hmm_std_lines, 4,hmm_std[1], keep_versions],n=20))
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,3,,,,1]>600 ))))->totalTime600)
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,3,,,,1]>300 ))))->totalTime300)
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,"total.pct",,,,1]>20 ))))->totalPercent20)
+  length(names(which(sapply(rownames(test_result_mat_full),
+                            function(x) any(test_result_mat_full[x,"total.pct",,,,1]>1 ))))->totalPercent01)
+  tmp_foo<-aperm(test_result_means[intersect(totalPercent20,hmm_fast_lines),,hmm_fast,keep_versions],
+                 c(1,4,2,3))
+  print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliFASTHMMTEST_selac_UNREST_none"],1,max,na.rm=T),decreasing = T),
+                ,,"ecoliFASTHMMTEST_selac_UNREST_none" ])
+  tmp_foo<-aperm(test_result_means[intersect(totalPercent20,hmm_std_lines),,hmm_std,keep_versions],
+                 c(1,4,2,3))
+  print(tmp_foo[order(apply(tmp_foo[,,"total.time","ecoliHMMEVAL50_selac_UNREST_none"],1,max,na.rm=T),decreasing = T),
+                ,,"ecoliHMMEVAL50_selac_UNREST_none" ])
+  tmp_bar <- aperm(test_result_means[totalPercent01,,c(hmm_fast,hmm_std),keep_versions],c(1,3,4,2))
+  tmp_bar_n <- aperm(test_result_counts[totalPercent01,c(hmm_fast,hmm_std),keep_versions],c(1,2,3))
+  tmp_bar_n <- tmp_bar_n[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),, ]
+  tmp_bar <- tmp_bar[order(apply(tmp_bar[,,,"total.time"],1,max,na.rm=T),decreasing = T),,, ]
+  tmp_bar_names <- dimnames(tmp_bar)
+  tmp_bar_names2 <- expand.grid(tmp_bar_names[[1]],tmp_bar_names[[2]])
+  tmp_bar_rownames <- paste(tmp_bar_names2[[1]],tmp_bar_names2[[2]],sep="." )
+  tmp_bar_names2 <- expand.grid(tmp_bar_names[[3]],tmp_bar_names[[4]])
+  tmp_bar_colnames <-paste(tmp_bar_names2[[1]],tmp_bar_names2[[2]],sep="." )
+  dim(tmp_bar_n)=c(prod(dim(tmp_bar_n)[1:2]),prod(dim(tmp_bar_n)[-(1:2)]))
+  dim(tmp_bar)=c(prod(dim(tmp_bar)[1:2]),prod(dim(tmp_bar)[-(1:2)]))
+  dim(tmp_bar)
+  rownames(tmp_bar)=tmp_bar_rownames
+  rownames(tmp_bar_n)=tmp_bar_rownames
+  colnames(tmp_bar)=tmp_bar_colnames
+  colnames(tmp_bar_n)=tmp_bar_names[[3]]
+  names(dimnames(tmp_bar))<- paste(names(tmp_bar_names)[c(1,3)],names(tmp_bar_names)[c(2,4)],sep=".")
+  write.csv(tmp_bar,file="selac_revision_hmm_comparison.csv",  na = "")
+  write.csv(tmp_bar_n,file="selac_revision_hmm_comparison_counts.csv",  na = "")
+  tmp_bar_names2 <- expand.grid(tmp_bar_names[[3]],tmp_bar_names[[4]])
+  colnames(tmp_bar) <-paste(tmp_bar_names2[[2]],tmp_bar_names2[[1]],sep="." )
+  colnames(tmp_bar_n) <-paste("samples",colnames(tmp_bar_n),sep="." )
+  write.csv(cbind(tmp_bar,tmp_bar_n),file="selac_revision_hmm_comparison_combo.csv",  na = "")
+  save.image(file="selac_timings_hmm_201808091041.RData")
 }
