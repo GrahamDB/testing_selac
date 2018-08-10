@@ -817,5 +817,5 @@ if(F){
   colnames(tmp_bar) <-paste(tmp_bar_names2[[2]],tmp_bar_names2[[1]],sep="." )
   colnames(tmp_bar_n) <-paste("samples",colnames(tmp_bar_n),sep="." )
   write.csv(cbind(tmp_bar,tmp_bar_n),file="selac_revision_hmm_comparison_combo.csv",  na = "")
-  save.image(file="selac_timings_hmm_201808091041.RData")
+  save.image(file=format(Sys.time(),format = "selac_timings_hmm_%Y%m%d%H%M.RData"))
 }
