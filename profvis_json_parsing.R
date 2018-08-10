@@ -726,17 +726,17 @@ if(F){
 
 
 if(F){
-  revision.key=c("ca4a198","f1c3d1e","86cc7e9", "ade1e58", "5c98a1f", "9cc4412", "000ff0d")
+  revision.key=c("ab3e84e", "5c98a1f")
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
                                   revision.key,1,
-                                  c(3010:3039)) -> test_result_mat_full;})
+                                  c(3010:3045)) -> test_result_mat_full;})
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
                                   revision.key,1,
-                                  c(3010:3039)) -> test_result_mat_fullb;})
+                                  c(3010:3045)) -> test_result_mat_fullb;})
   print(all.equal(test_result_mat_full,test_result_mat_fullb))
   dimnames(test_result_mat_full)[[4]]<-paste0("r",dimnames(test_result_mat_full)[[4]])
   dim(test_result_mat_full)
@@ -748,7 +748,7 @@ if(F){
   # dimnames(which(apply(test_result_counts>10,2:3,any)))-> reg.atleast10
   hmm_fast <- paste0("ecoliFASTHMMTEST_selac_UNREST_",c("none","median",  "quadrature","lognormal"))
   hmm_std <- paste0("ecoliHMMEVAL50_selac_UNREST_",c("none","median",  "quadrature","lognormal"))
-  keep_versions <- paste0("r",c("f1c3d1e","86cc7e9", "ade1e58", "5c98a1f"))
+  keep_versions <- paste0("r",c("ab3e84e", "5c98a1f"))
   length(names(which(apply(test_result_counts[,hmm_fast,]>0,1,any)))-> hmm_fast_lines)
   length(names(which(apply(test_result_counts[,hmm_std ,]>0,1,any)))-> hmm_std_lines)
   
