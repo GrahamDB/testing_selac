@@ -830,12 +830,12 @@ if(F){
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
                                   revision.key,1,
-                                  c(3010:3045)) -> test_result_mat_full;})
+                                  c(3010:3051)) -> test_result_mat_full;})
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
                                   revision.key,1,
-                                  c(3010:3045)) -> test_result_mat_fullb;})
+                                  c(3010:3051)) -> test_result_mat_fullb;})
   print(all.equal(test_result_mat_full,test_result_mat_fullb))
   dimnames(test_result_mat_full)[[4]]<-paste0("r",dimnames(test_result_mat_full)[[4]])
   dim(test_result_mat_full)
