@@ -959,5 +959,48 @@ if(F){
   
   xyplot(mem.total~jitter(neval),groups=ver,data=test_results_max_row,
          auto.key=list(columns=2))
+  
+  
+  seed.eval10 <- c("S3010","S3011","S3012","S3014","S3015", "S3040","S3041","S3044","S3046","S3048","S3050","S3051")
+  seed.eval43 <- c("S3011","S3048","S3050")
+  seed.eval42 <- c("S3012","S3014","S3042","S3049")
+  
+  timing_40q <- 
+    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+                                               "ecoliFASTHMMTEST_selac_UNREST_quadrature",
+                                               "rab3e84e","p1",seed.eval10]))
+  timing_10n <- 
+    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+                                               "ecoliFASTHMMTEST_selac_UNREST_none",
+                                               "rab3e84e","p1",seed.eval10]))
+  
+  timing_168q <- 
+    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+                                               "ecoliHMMEVAL50_selac_UNREST_quadrature",
+                                               "rab3e84e","p1",seed.eval42]))
+  timing_42n <- 
+    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+                                               "ecoliHMMEVAL50_selac_UNREST_none",
+                                               "rab3e84e","p1",seed.eval42]))
+  
+  timing_172q <- 
+    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+                                               "ecoliHMMEVAL50_selac_UNREST_quadrature",
+                                               "rab3e84e","p1",seed.eval43]))
+  timing_43n <- 
+    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+                                               "ecoliHMMEVAL50_selac_UNREST_none",
+                                               "rab3e84e","p1",seed.eval43]))
+  
+  # Current result for expAtv:
+  # Critical section:
+  #- if(verbose) cat(sprintf("while(t_now = %g < ..): nstep=%d, t_step=%g\n",
+  #-                         t_now, nstep, t_step))
+  #- V[,1] <- (1/beta)*w
+  #- for (j in 1:m) {
+  #!   p <- as.vector(A %*% V[,j])  #The matrix multiplication on this line consumes 80% of time and resouces
+  #   for (i in 1:j) {
+  #     H[i,j] <- s <- sum(V[,i] *  p)
+  
   save.image(file=format(Sys.time(),format = "selac_timings_hmm_scan_%Y%m%d%H%M.RData"))
 }
