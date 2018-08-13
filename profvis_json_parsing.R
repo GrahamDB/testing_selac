@@ -825,7 +825,7 @@ if(F){
 
 
 if(F){
-  revision.key=c("ab3e84e", "5c98a1f")
+  revision.key=c("4ea4356","ab3e84e", "5c98a1f")
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
@@ -847,7 +847,8 @@ if(F){
   # dimnames(which(apply(test_result_counts>10,2:3,any)))-> reg.atleast10
   hmm_fast <- paste0("ecoliFASTHMMTEST_selac_UNREST_",c("none","median",  "quadrature","lognormal"))
   hmm_std <- paste0("ecoliHMMEVAL50_selac_UNREST_",c("none","median",  "quadrature","lognormal"))
-  keep_versions <- paste0("r",c("ab3e84e", "5c98a1f"))
+  keep_versions <- paste0("r",revision.key)
+  # keep_versions <- paste0("r",c("ab3e84e", "5c98a1f"))
   length(names(which(apply(test_result_counts[,hmm_fast,]>0,1,any)))-> hmm_fast_lines)
   length(names(which(apply(test_result_counts[,hmm_std ,]>0,1,any)))-> hmm_std_lines)
   
@@ -1001,6 +1002,19 @@ if(F){
   #!   p <- as.vector(A %*% V[,j])  #The matrix multiplication on this line consumes 80% of time and resouces
   #   for (i in 1:j) {
   #     H[i,j] <- s <- sum(V[,i] *  p)
+  test_results_max_row[paste0("eH10Uqab3S301",c(0,1,2,4,5)),"mem.total"]
+  na.omit(as.data.frame(test_result_mat_full[1,,
+                                             "ecoliFASTHMMTEST_selac_UNREST_lognormal",
+                                             "rab3e84e","p1",seed.eval10]))
+  na.omit(as.data.frame(test_result_mat_full[4,,
+                                             "ecoliFASTHMMTEST_selac_UNREST_lognormal",
+                                             "rab3e84e","p1",seed.eval10]))
+  na.omit(as.data.frame(test_result_mat_full[4,,
+                                             "ecoliFASTHMMTEST_selac_UNREST_median",
+                                             "rab3e84e","p1",seed.eval10]))
+  na.omit(as.data.frame(test_result_mat_full[1,,
+                                             "ecoliFASTHMMTEST_selac_UNREST_median",
+                                             "rab3e84e","p1",seed.eval10]))
   
   save.image(file=format(Sys.time(),format = "selac_timings_hmm_scan_%Y%m%d%H%M.RData"))
 }
