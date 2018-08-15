@@ -397,6 +397,28 @@ backtrack_equivalent_version <- function(label_names){
   # print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
+
+  #f09bcd7..65d7449
+  #a 65d7449 to f09bcd7, file 65d7449/R/selac.R
+  tmp <-grepl("65d7449/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 3571 & tmp
+  slot2 <- label_data[[2]] >= 3573 & tmp
+  slots <- slot1|slot2
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-65d7449","GrahamDB-selac-f09bcd7",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 0
+
+  #819329e..f09bcd7
+  #a f09bcd7 to 819329e, file f09bcd7/R/selac.R
+  tmp <-grepl("f09bcd7/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 3555 & tmp
+  slot2 <- label_data[[2]] >= 3559 & label_data[[2]] <= 3596 & tmp
+  slot3 <- label_data[[2]] >= 3598 & tmp
+  slots <- slot1|slot2|slot3
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-f09bcd7","GrahamDB-selac-819329e",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + -1
+  label_data[[2]][slot3] <- label_data[[2]][slot3] + -1
   
   #59f4f44..819329e
   #a 819329e to 59f4f44, file 819329e/R/selac.R
@@ -870,7 +892,7 @@ if(F){
 
 
 if(F){
-  revision.key=c("819329e","4ea4356","ab3e84e", "5c98a1f")
+  revision.key=c("f09bcd7","65d7449","4ea4356","ab3e84e","5c98a1f")
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
@@ -1059,19 +1081,21 @@ if(F){
   #!   p <- as.vector(A %*% V[,j])  #The matrix multiplication on this line consumes 80% of time and resouces
   #   for (i in 1:j) {
   #     H[i,j] <- s <- sum(V[,i] *  p)
-  test_results_max_row[paste0("eH10Uq",rep(c("ab3","4ea","5c9"),each=5),
+
+  short_tag <- sub(pattern="r([0-9a-f]{3})[0-9a-f]{4}", replacement = "\\1",x = keep_versions)
+  test_results_max_row[paste0("eH10Uq",rep(short_tag,each=5),
                               "S301",c(0,1,2,4,5)),
                        "self.time",drop=FALSE]
   
-  test_results_max_row[paste0("eH10Uq",rep(c("ab3","4ea","5c9"),each=5),
+  test_results_max_row[paste0("eH10Uq",rep(short_tag,each=5),
                               "S301",c(0,1,2,4,5)),
                        "total.time",drop=FALSE]
   
-  test_results_max_row[paste0("eH10Uq",rep(c("ab3","4ea","5c9"),each=5),
+  test_results_max_row[paste0("eH10Uq",rep(short_tag,each=5),
                               "S301",c(0,1,2,4,5)),
                        "mem.total",drop=FALSE]
   
-  test_results_max_row[paste0("eH10Un",rep(c("ab3","4ea","5c9"),each=5),
+  test_results_max_row[paste0("eH10Un",rep(short_tag,each=5),
                               "S301",c(0,1,2,4,5)),
                        "mem.total",drop=FALSE]
   
