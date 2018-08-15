@@ -397,6 +397,39 @@ backtrack_equivalent_version <- function(label_names){
   # print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
+  
+  #59f4f44..819329e
+  #a 819329e to 59f4f44, file 819329e/R/selac.R
+  tmp <-grepl("819329e/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 1085 & tmp
+  slot2 <- label_data[[2]] >= 1090 & label_data[[2]] <= 1096 & tmp
+  slot3 <- label_data[[2]] >= 1098 & label_data[[2]] <= 3523 & tmp
+  slot4 <- label_data[[2]] >= 3525 & label_data[[2]] <= 3595 & tmp
+  slot5 <- label_data[[2]] >= 3597 & tmp
+  slots <- slot1|slot2|slot3|slot4|slot5
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-819329e","GrahamDB-selac-59f4f44",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 0
+  label_data[[2]][slot3] <- label_data[[2]][slot3] + 0
+  label_data[[2]][slot4] <- label_data[[2]][slot4] + 0
+  label_data[[2]][slot5] <- label_data[[2]][slot5] + 0
+  
+  #4ea4356..59f4f44
+  #a 59f4f44 to 4ea4356, file 59f4f44/R/selac.R
+  tmp <-grepl("59f4f44/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 1082 & tmp
+  slot2 <- label_data[[2]] >= 1098 & label_data[[2]] <= 1191 & tmp
+  slot3 <- label_data[[2]] >= 1193 & label_data[[2]] <= 3511 & tmp
+  slot4 <- label_data[[2]] >= 3515 & label_data[[2]] <= 3555 & tmp
+  slot5 <- label_data[[2]] >= 3558 & tmp
+  slots <- slot1|slot2|slot3|slot4|slot5
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-59f4f44","GrahamDB-selac-4ea4356",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 4
+  label_data[[2]][slot3] <- label_data[[2]][slot3] + 3
+  label_data[[2]][slot4] <- label_data[[2]][slot4] + 3
+  label_data[[2]][slot5] <- label_data[[2]][slot5] + 3
+  
 
   #ab3e84e..4ea4356
   #a 4ea4356 to ab3e84e, file 4ea4356/R/selac.R
@@ -837,7 +870,7 @@ if(F){
 
 
 if(F){
-  revision.key=c("4ea4356","ab3e84e", "5c98a1f")
+  revision.key=c("819329e","4ea4356","ab3e84e", "5c98a1f")
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
@@ -849,6 +882,18 @@ if(F){
                                   revision.key,1,
                                   c(3010:3051)) -> test_result_mat_fullb;})
   print(all.equal(test_result_mat_full,test_result_mat_fullb))
+  # as.numeric(test_result_mat_full[,1,"ecoliFASTHMMTEST_selac_UNREST_none","r4ea4356",1,1])
+  # as.numeric(test_result_mat_full[,1,"ecoliFASTHMMTEST_selac_UNREST_none","rab3e84e",1,1])
+  # as.numeric(apply(test_result_mat_full,2:6, 
+  #       function(x) { if(all(is.na(x))) return(x); x[is.na(x)] <-0; x;  
+  #       })[,1,"ecoliFASTHMMTEST_selac_UNREST_none","r4ea4356",1,1])
+  # as.numeric(apply(test_result_mat_full,2:6, 
+  #       function(x) { if(all(is.na(x))) return(x); x[is.na(x)] <-0; x;  
+  #       })[,1,"ecoliFASTHMMTEST_selac_UNREST_none","r4ea4356",1,31])
+  apply(test_result_mat_full,2:6, 
+        function(x) { if(all(is.na(x))) return(x); x[is.na(x)] <-0; x;  
+        }) -> test_result_mat_full
+  
   dimnames(test_result_mat_full)[[4]]<-paste0("r",dimnames(test_result_mat_full)[[4]])
   dim(test_result_mat_full)
   apply(test_result_mat_full,1:5,mean,na.rm=T)[,,,,1] -> test_result_means; 
@@ -981,29 +1026,29 @@ if(F){
   timing_40q <- 
     na.omit(as.data.frame(test_result_mat_full[,"self.time",
                                                "ecoliFASTHMMTEST_selac_UNREST_quadrature",
-                                               "rab3e84e","p1",seed.eval10]))
+                                               keep_versions[1],"p1",seed.eval10[1:5]]))
   timing_10n <- 
     na.omit(as.data.frame(test_result_mat_full[,"self.time",
                                                "ecoliFASTHMMTEST_selac_UNREST_none",
-                                               "rab3e84e","p1",seed.eval10]))
+                                               keep_versions[1],"p1",seed.eval10[1:5]]))
   
   timing_168q <- 
-    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+    na.omit(as.data.frame(test_result_mat_full[,c("self.time","self.pct"),
                                                "ecoliHMMEVAL50_selac_UNREST_quadrature",
-                                               "rab3e84e","p1",seed.eval42]))
+                                               keep_versions[1],"p1",seed.eval42[1]]))
   timing_42n <- 
-    na.omit(as.data.frame(test_result_mat_full[,"self.time",
+    na.omit(as.data.frame(test_result_mat_full[,c("self.time","self.pct"),
                                                "ecoliHMMEVAL50_selac_UNREST_none",
-                                               "rab3e84e","p1",seed.eval42]))
+                                               keep_versions[1],"p1",seed.eval42[1]]))
   
   timing_172q <- 
     na.omit(as.data.frame(test_result_mat_full[,"self.time",
                                                "ecoliHMMEVAL50_selac_UNREST_quadrature",
-                                               "rab3e84e","p1",seed.eval43]))
+                                               keep_versions[1],"p1",seed.eval43[1:2]]))
   timing_43n <- 
     na.omit(as.data.frame(test_result_mat_full[,"self.time",
                                                "ecoliHMMEVAL50_selac_UNREST_none",
-                                               "rab3e84e","p1",seed.eval43]))
+                                               keep_versions[1],"p1",seed.eval43[1:2]]))
   
   # Current result for expAtv:
   # Critical section:
@@ -1014,19 +1059,40 @@ if(F){
   #!   p <- as.vector(A %*% V[,j])  #The matrix multiplication on this line consumes 80% of time and resouces
   #   for (i in 1:j) {
   #     H[i,j] <- s <- sum(V[,i] *  p)
-  test_results_max_row[paste0("eH10Uqab3S301",c(0,1,2,4,5)),"mem.total"]
-  na.omit(as.data.frame(test_result_mat_full[1,,
+  test_results_max_row[paste0("eH10Uq",rep(c("ab3","4ea","5c9"),each=5),
+                              "S301",c(0,1,2,4,5)),
+                       "self.time",drop=FALSE]
+  
+  test_results_max_row[paste0("eH10Uq",rep(c("ab3","4ea","5c9"),each=5),
+                              "S301",c(0,1,2,4,5)),
+                       "total.time",drop=FALSE]
+  
+  test_results_max_row[paste0("eH10Uq",rep(c("ab3","4ea","5c9"),each=5),
+                              "S301",c(0,1,2,4,5)),
+                       "mem.total",drop=FALSE]
+  
+  test_results_max_row[paste0("eH10Un",rep(c("ab3","4ea","5c9"),each=5),
+                              "S301",c(0,1,2,4,5)),
+                       "mem.total",drop=FALSE]
+  
+  as.data.frame(test_result_mat_full[1,,
                                              "ecoliFASTHMMTEST_selac_UNREST_lognormal",
-                                             "rab3e84e","p1",seed.eval10]))
-  na.omit(as.data.frame(test_result_mat_full[4,,
+                                     keep_versions[1],"p1",seed.eval10])
+  as.data.frame(test_result_mat_full[4,,
                                              "ecoliFASTHMMTEST_selac_UNREST_lognormal",
-                                             "rab3e84e","p1",seed.eval10]))
-  na.omit(as.data.frame(test_result_mat_full[4,,
+                                             keep_versions[1],"p1",seed.eval10])
+  as.data.frame(test_result_mat_full[4,,
                                              "ecoliFASTHMMTEST_selac_UNREST_median",
-                                             "rab3e84e","p1",seed.eval10]))
-  na.omit(as.data.frame(test_result_mat_full[1,,
+                                             keep_versions[1],"p1",seed.eval10])
+  as.data.frame(test_result_mat_full[1,,
                                              "ecoliFASTHMMTEST_selac_UNREST_median",
-                                             "rab3e84e","p1",seed.eval10]))
+                                             keep_versions[1],"p1",seed.eval10])
+  
+  # summary(glm(total.time~neval*ver*gamma,data=test_results_max_row))
+  # summary(glm(total.time~neval*ver+neval*gamma,data=test_results_max_row))
+  # summary(glm(total.time~neval*ver+gamma,data=test_results_max_row))
+  # summary(glm(total.time~neval+ver+gamma,data=test_results_max_row))
+
   
   save.image(file=format(Sys.time(),format = "selac_timings_hmm_scan_%Y%m%d%H%M.RData"))
 }

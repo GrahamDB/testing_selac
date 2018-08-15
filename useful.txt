@@ -78,7 +78,7 @@ proc_deltas () { rev_count=${1:-5} ;
     next_rev=$( git log -n 1 --pretty=oneline  | cut -c 1-7);
     for  prev_rev in $( git log -n $rev_count --pretty=oneline | tail -n +2 | cut -c 1-7) ; 
     do echo '#'$prev_rev..$next_rev;
-       git diff -r ${prev_rev} -r ${next_rev}  | grep '^@@\|^diff' | proc_block_alt | sort | sed -e 's/islot/slot/g; s/^atmp/tmp/'; 
+       git diff -r ${prev_rev} -r ${next_rev} R/selac.R  | grep '^@@\|^diff' | proc_block_alt | sort | sed -e 's/islot/slot/g; s/^atmp/tmp/'; 
        echo ;
        next_rev=$prev_rev;
     done; ) ; }
