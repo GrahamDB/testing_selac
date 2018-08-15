@@ -397,6 +397,39 @@ backtrack_equivalent_version <- function(label_names){
   # print(label_data)
   tmp <-grepl("selac.R",label_data[[1]]) 
   label_data[[1]][!tmp] <- sub("^GrahamDB-selac-.......","GrahamDB-selac-ca13013",label_data[[1]][!tmp])
+  
+  #59f4f44..819329e
+  #a 819329e to 59f4f44, file 819329e/R/selac.R
+  tmp <-grepl("819329e/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 1085 & tmp
+  slot2 <- label_data[[2]] >= 1090 & label_data[[2]] <= 1096 & tmp
+  slot3 <- label_data[[2]] >= 1098 & label_data[[2]] <= 3523 & tmp
+  slot4 <- label_data[[2]] >= 3525 & label_data[[2]] <= 3595 & tmp
+  slot5 <- label_data[[2]] >= 3597 & tmp
+  slots <- slot1|slot2|slot3|slot4|slot5
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-819329e","GrahamDB-selac-59f4f44",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 0
+  label_data[[2]][slot3] <- label_data[[2]][slot3] + 0
+  label_data[[2]][slot4] <- label_data[[2]][slot4] + 0
+  label_data[[2]][slot5] <- label_data[[2]][slot5] + 0
+  
+  #4ea4356..59f4f44
+  #a 59f4f44 to 4ea4356, file 59f4f44/R/selac.R
+  tmp <-grepl("59f4f44/R/selac.R",label_data[[1]])
+  slot1 <- label_data[[2]] >= 0 & label_data[[2]] <= 1082 & tmp
+  slot2 <- label_data[[2]] >= 1098 & label_data[[2]] <= 1191 & tmp
+  slot3 <- label_data[[2]] >= 1193 & label_data[[2]] <= 3511 & tmp
+  slot4 <- label_data[[2]] >= 3515 & label_data[[2]] <= 3555 & tmp
+  slot5 <- label_data[[2]] >= 3558 & tmp
+  slots <- slot1|slot2|slot3|slot4|slot5
+  label_data[[1]][slots] <- sub("^GrahamDB-selac-59f4f44","GrahamDB-selac-4ea4356",label_data[[1]][slots])
+  label_data[[2]][slot1] <- label_data[[2]][slot1] + 0
+  label_data[[2]][slot2] <- label_data[[2]][slot2] + 4
+  label_data[[2]][slot3] <- label_data[[2]][slot3] + 3
+  label_data[[2]][slot4] <- label_data[[2]][slot4] + 3
+  label_data[[2]][slot5] <- label_data[[2]][slot5] + 3
+  
 
   #ab3e84e..4ea4356
   #a 4ea4356 to ab3e84e, file 4ea4356/R/selac.R
