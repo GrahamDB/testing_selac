@@ -837,7 +837,7 @@ if(F){
 
 
 if(F){
-  revision.key=c("4ea4356","ab3e84e", "5c98a1f")
+  revision.key=c("819329e","4ea4356","ab3e84e", "5c98a1f")
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
