@@ -1,0 +1,22 @@
+bash$ source("R_profile_helper.R", keep.source = T); run_ecoli_profile_mode(seed=3040, mode="HMMEVALFULL", nuc.model="UNREST", gamma.type="none", nCores=1, ref="38824ae")
+[1] "/home/asterion/R/x86_64-pc-linux-gnu-library/3.4"
+[2] "/usr/local/lib/R/site-library"                   
+[3] "/usr/lib/R/site-library"                         
+[4] "/usr/lib/R/library"                              
+Loading required package: profvis
+NULL
+[1] "38824ae"
+Loading required package: ape
+Loading required package: deSolve
+Loading required package: nloptr
+Loading required package: nnet
+Start: ecoliHMMEVALFULL_selac_UNREST_none_38824ae_1_3040
+profvis: code exited with error:
+missing value where TRUE/FALSE needed
+
+End: ecoliHMMEVALFULL_selac_UNREST_none_38824ae_1_3040	LL: NA
+SELAC Done. saving results
+[1] NA
+> 
+> 
+

@@ -929,7 +929,7 @@ if(F){
 
 
 if(F){
-  revision.key=c("f09bcd7","65d7449","4ea4356","ab3e84e","5c98a1f")
+  revision.key=c("38824ae","f09bcd7","4ea4356","ab3e84e","5c98a1f")
   system.time({comparison.lattice(paste0("ecoli",c("FASTHMMTEST","HMMEVAL50"),"_selac"),
                                   c("GTR","UNREST"),
                                   c("none","median",  "quadrature","lognormal"),
