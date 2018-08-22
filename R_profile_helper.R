@@ -495,7 +495,7 @@ run_test_ecoli_optimize <- function(seed=sample.int(1e6,1),ref="v1.6.1-rc1", nCo
 
 
 run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT",
-                                          "SHORTTESTHMM","SHORTHMM",
+                                          "SHORTTESTHMM","SHORTHMM","LONGHMM",
                                           "FASTHMMTEST","HMMEVAL50","HMMEVALFULL",
                                           "FASTHMMDEBUG","FASTHMMSINGLEDEBUG"),
                                    seed=sample.int(1e6,1),
@@ -653,14 +653,38 @@ run_ecoli_profile_mode <- function(mode=c("SHORTTEST","TEST","SHORT",
         # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
         # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
         result <- SelacHMMOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
-                                edge.length = 'optimize',data.type='codon',
-                                codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
-                                include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
-                                diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
-                                n.cores.by.gene  = 1, n.cores.by.gene.by.site=nCores,
-                                max.restarts = 1, max.evals=1, max.tol=1e-2,
-                                fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
-                                output.restart.filename=output.file.name, max.iterations=1)
+                                   edge.length = 'optimize',data.type='codon',
+                                   codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
+                                   include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
+                                   diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                                   n.cores.by.gene  = 1, n.cores.by.gene.by.site=nCores,
+                                   max.restarts = 1, max.evals=1, max.tol=1e-2,
+                                   fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
+                                   output.restart.filename=output.file.name, max.iterations=1)
+        # output.restart.filename=output.file.name, start.from.mle = TRUE,
+        # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
+      }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
+      save(prof_obj, file=paste0(profile_prefix,".Rprofvis.RData"))
+      # htmlwidgets::saveWidget(prof_obj, 
+      #                         file=paste0(profile_prefix,".Rprofvis.html"))
+    })
+  } else  if(mode=="LONGHMM"){
+    # HMM code requires starting edge length < 0.5 and > 1e-8
+    tree$edge.length <- runif(nrow(tree$edge), 0.01, 0.45)
+    try({
+      prof_obj <- profvis({
+        ## start.from.mle set to allow manual specification of fasta files
+        # requires mle.matrix to be set, setting to start.from.mle==FALSE values for now
+        # mle.matrix[1,] = c(selac.starting.vals[1,1:3], 0.25, 0.25, 0.25, nuc.ip)
+        result <- SelacHMMOptimize(codon.data.path = 'kosi07_data/', phy = tree, 
+                                   edge.length = 'optimize',data.type='codon',
+                                   codon.model = codon.model, nuc.model = nuc.model, edge.linked=TRUE,
+                                   include.gamma = include.gamma, gamma.type=gamma.type, ncats = 4, numcode = 1,
+                                   diploid = TRUE, k.levels = 0, aa.properties = NULL, verbose = FALSE,
+                                   n.cores.by.gene  = 1, n.cores.by.gene.by.site=nCores,
+                                   max.restarts = 1, max.evals=5, max.tol=1e-2,
+                                   fasta.rows.to.keep=NULL, recalculate.starting.brlen=FALSE, output.by.restart=FALSE,
+                                   output.restart.filename=output.file.name, max.iterations=5)
         # output.restart.filename=output.file.name, start.from.mle = TRUE,
         # mle.matrix=starting.vals, tol.step=1, partition.order = fasta.file)
       }, prof_output = paste0(profile_prefix,".Rprof"),interval=0.5)
